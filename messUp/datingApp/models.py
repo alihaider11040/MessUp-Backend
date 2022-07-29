@@ -75,7 +75,7 @@ class Zodiac(models.Model):
     ('pisces','Pisces'),
     )
 
-    zodiac = models.OneToOneField('Profile', blank=True)
+    zodiac = models.OneToOneField('Profile', blank=True, on_delete=models.CASCADE)
     created = models.DateTimeField(auto_now_add= True)
     id = models.UUIDField(default=uuid.uuid4, unique=True, primary_key=True, editable = False)
 class Profile(models.Model):
@@ -89,10 +89,10 @@ class Profile(models.Model):
     profile_image = models.ImageField(null=True, blank = True, upload_to='profiles/', default = 'profiles/user-default.png')
     created = models.DateTimeField(auto_now_add= True)
     id = models.UUIDField(default=uuid.uuid4, unique=True, primary_key=True, editable = False)
-    sexualOrientation = models.OneToOneField(SexualOrientation,blank=True)
+    sexualOrientation = models.OneToOneField(SexualOrientation,blank=True, on_delete= models.CASCADE)
     country = models.ForeignKey(Country, on_delete=models.CASCADE)
-    profession = models.OneToOneField(Profession,blank=True)
-    institute = models.OneToOneField(Institute,blank=True)
+    profession = models.OneToOneField(Profession,blank=True, on_delete= models.CASCADE)
+    institute = models.OneToOneField(Institute,blank=True, on_delete= models.CASCADE)
     phone_number = models.CharField(max_length=11, null = True, blank=True)    
     def __str__(self):
         return str(self.user.username)
@@ -122,8 +122,8 @@ class Interests(models.Model):
 
 
 class MatchMake(models.Model):
-    person1 = models.ForeignKey(Profile, on_delete=models.CASCADE)
-    person2 = models.ForeignKey(Profile, on_delete=models.CASCADE)
+    person1 = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name="+")
+    person2 = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name="+")
 
     match_check=models.BooleanField(default = False)
     created = models.DateTimeField(auto_now_add= True)
@@ -131,7 +131,7 @@ class MatchMake(models.Model):
 
 
 class Login(models.Model):
-    phone_number = models.ForeignKey(Profile, blank= True, null=True)
-    password = models.ForeignKey(Profile, blank=True, null= True)
+    phone_number = models.ForeignKey(Profile, on_delete= models.CASCADE, blank= True, null=True, related_name="+")
+    password = models.ForeignKey(Profile, on_delete= models.CASCADE, blank=True, null= True, related_name="+")
     created = models.DateTimeField(auto_now_add= True)
     id = models.UUIDField(default=uuid.uuid4, unique=True, primary_key=True, editable = False)
