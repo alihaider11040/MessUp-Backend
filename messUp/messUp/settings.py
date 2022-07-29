@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-j&i*j7hm-w7syne6m347)b$k+qe@!q$7al#ub0vrqf=2rtt(be
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
+#AUTH_USER_MODEL = 'datingApp.Login'
 
 # Application definition
 
@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'datingApp.apps.DatingappConfig'
 ]
 
 MIDDLEWARE = [

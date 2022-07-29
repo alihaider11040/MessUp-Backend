@@ -1,4 +1,5 @@
 from pydoc import describe
+from tkinter import CASCADE
 from unittest.util import _MAX_LENGTH
 from django.db import models
 from django.contrib.auth.models import User
@@ -75,7 +76,7 @@ class Zodiac(models.Model):
     ('pisces','Pisces'),
     )
 
-    zodiac = models.OneToOneField('Profile', blank=True)
+    zodiac = models.OneToOneField('Profile', blank=True,on_delete=models.CASCADE)
     created = models.DateTimeField(auto_now_add= True)
     id = models.UUIDField(default=uuid.uuid4, unique=True, primary_key=True, editable = False)
 class Profile(models.Model):
@@ -89,11 +90,12 @@ class Profile(models.Model):
     profile_image = models.ImageField(null=True, blank = True, upload_to='profiles/', default = 'profiles/user-default.png')
     created = models.DateTimeField(auto_now_add= True)
     id = models.UUIDField(default=uuid.uuid4, unique=True, primary_key=True, editable = False)
-    sexualOrientation = models.OneToOneField(SexualOrientation,blank=True)
+    sexualOrientation = models.ForeignKey(SexualOrientation,on_delete=models.CASCADE)
     country = models.ForeignKey(Country, on_delete=models.CASCADE)
-    profession = models.OneToOneField(Profession,blank=True)
-    institute = models.OneToOneField(Institute,blank=True)
+    profession = models.ForeignKey(Profession,on_delete=models.CASCADE)
+    institute = models.ForeignKey(Institute,on_delete=models.CASCADE)
     phone_number = models.CharField(max_length=11, null = True, blank=True)    
+    
     def __str__(self):
         return str(self.user.username)
 
@@ -122,16 +124,15 @@ class Interests(models.Model):
 
 
 class MatchMake(models.Model):
-    person1 = models.ForeignKey(Profile, on_delete=models.CASCADE)
-    person2 = models.ForeignKey(Profile, on_delete=models.CASCADE)
+    person1 = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name="+")
+    person2 = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name="+")
 
-    match_check=models.BooleanField(default = False)
+    match_check=models.BooleanField(default = True)
     created = models.DateTimeField(auto_now_add= True)
     id = models.UUIDField(default=uuid.uuid4, unique=True, primary_key=True, editable = False)
 
-
 class Login(models.Model):
-    phone_number = models.ForeignKey(Profile, blank= True, null=True)
-    password = models.ForeignKey(Profile, blank=True, null= True)
+    phone_num = models.ForeignKey(Profile, blank= True, null=True,on_delete=models.CASCADE, related_name="+")
+    passw = models.ForeignKey(Profile, blank=True, null= True,on_delete=models.CASCADE, related_name="+")
     created = models.DateTimeField(auto_now_add= True)
     id = models.UUIDField(default=uuid.uuid4, unique=True, primary_key=True, editable = False)
