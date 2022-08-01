@@ -1,5 +1,7 @@
 from django.shortcuts import render
-
+from django.shortcuts import get_object_or_404
+from rest_framework.decorators import api_view
+from rest_framework import status
 # Create your views here.
 
 
@@ -15,7 +17,7 @@ def addwithphone(request): #send phone number and OTP i.e token generated for au
         serializer = Userbymobileserializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data[], status=status.HTTP_201_CREATED)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 
