@@ -9,15 +9,17 @@ from rest_framework import status
 def addwithphone(request): #send phone number and OTP i.e token generated for authecation
     data = request.data()
     phoneNumber=data['phoneNumber']
-    alreadyExists = Login.objects.filter(phone_number=path).exists()
+    alreadyExists = Login.objects.filter(phone_number=phoneNumber).exists()
     if alreadyExists:
         content = {'detail': 'user already exist!'}
         return Response(content)
     else:
         serializer = Userbymobileserializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            obj= serializer.save()
+            return Response(obj, status=status.HTTP_201_CREATED)
+
+
 
 
 
