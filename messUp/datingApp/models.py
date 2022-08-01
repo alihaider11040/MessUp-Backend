@@ -1,7 +1,7 @@
-from pydoc import describe
-from unittest.util import _MAX_LENGTH
+import datetime
 from django.db import models
 from django.contrib.auth.models import User
+from datetime import date
 import uuid
 
 class SexualOrientation(models.Model):
@@ -58,7 +58,6 @@ class Institute(models.Model):
    
     def __str__(self):
         return str(self.institution_name)
-
 class Zodiac(models.Model):
     ZODIAC_SIGNS = (
     ('aries','Aries'),
@@ -75,27 +74,46 @@ class Zodiac(models.Model):
     ('pisces','Pisces'),
     )
 
-    zodiac = models.OneToOneField('Profile', blank=True, on_delete=models.CASCADE)
+    zodiac =  models.CharField(max_length=100, choices=ZODIAC_SIGNS)
+  
     created = models.DateTimeField(auto_now_add= True)
     id = models.UUIDField(default=uuid.uuid4, unique=True, primary_key=True, editable = False)
+    def __str__(self):
+        return str(self.zodiac)
+
+class Login(models.Model):
+    phone_number = models.CharField(max_length=11, null = True, blank=True)
+    #passw = models.ForeignKey(Profile, blank=True, null= True,on_delete=models.CASCADE, related_name="+")
+    token = models.CharField(max_length=100, null=False, blank=False)
+    created = models.DateTimeField(auto_now_add= True)
+    id = models.UUIDField(default=uuid.uuid4, unique=True, primary_key=True, editable = False)
+    email= models.EmailField(max_length=200, blank = True, null = True)
+    
+    def __str__(self):
+        return str(self.email)
 class Profile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, null = True, blank = True)
+    #user = models.OneToOneField(User, on_delete=models.CASCADE, null = True, blank = True)
     username= models.CharField(max_length=200, blank=True, null = True)
     first_name = models.CharField(max_length=200, blank=True, null = True)
     last_name = models.CharField(max_length=200, blank=True, null = True)
-    email= models.EmailField(max_length=200, blank = True, null = True)
     city = models.CharField(max_length=200, blank = False, null = False)
     bio = models.TextField(blank = True, null= True)
     profile_image = models.ImageField(null=True, blank = True, upload_to='profiles/', default = 'profiles/user-default.png')
     created = models.DateTimeField(auto_now_add= True)
+    login = models.ForeignKey(Login, on_delete=models.CASCADE, null=True)
+    sexualOrientation = models.ForeignKey(SexualOrientation,on_delete=models.CASCADE)
     id = models.UUIDField(default=uuid.uuid4, unique=True, primary_key=True, editable = False)
-    sexualOrientation = models.OneToOneField(SexualOrientation,blank=True, on_delete= models.CASCADE)
     country = models.ForeignKey(Country, on_delete=models.CASCADE)
-    profession = models.OneToOneField(Profession,blank=True, on_delete= models.CASCADE)
-    institute = models.OneToOneField(Institute,blank=True, on_delete= models.CASCADE)
-    phone_number = models.CharField(max_length=11, null = True, blank=True)    
+    profession = models.ForeignKey(Profession,on_delete=models.CASCADE)
+    institute = models.ForeignKey(Institute,on_delete=models.CASCADE)
+    age = models.IntegerField(default= 18)
+    d = datetime.date(1997, 10, 19)
+    date_of_birth = models.DateField(default = d)
+    zodiac = models.ForeignKey(Zodiac, on_delete=models.CASCADE, null=True)
+
     def __str__(self):
-        return str(self.user.username)
+        return str(self.username)
+
 
 class Interests(models.Model):
     INTEREST_CHOICES = (
@@ -118,20 +136,22 @@ class Interests(models.Model):
     id = models.UUIDField(default=uuid.uuid4, unique=True, primary_key=True, editable = False)
 
     def __str__(self):
-        return self.interestsChoice
+        return str(self.interestsChoice)
 
 
 class MatchMake(models.Model):
     person1 = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name="+")
     person2 = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name="+")
 
-    match_check=models.BooleanField(default = False)
+    match_check=models.BooleanField(default = True)
     created = models.DateTimeField(auto_now_add= True)
     id = models.UUIDField(default=uuid.uuid4, unique=True, primary_key=True, editable = False)
 
 
-class Login(models.Model):
-    phone_number = models.ForeignKey(Profile, on_delete= models.CASCADE, blank= True, null=True, related_name="+")
-    password = models.ForeignKey(Profile, on_delete= models.CASCADE, blank=True, null= True, related_name="+")
+class BlockProfile(models.Model):
+    user1 = models.ForeignKey(Profile, blank= True, null=True,on_delete=models.CASCADE, related_name="+")
+    user2 = models.ForeignKey(Profile, blank=True, null= True,on_delete=models.CASCADE, related_name="+")
+    block_check=models.BooleanField(default = True)
     created = models.DateTimeField(auto_now_add= True)
     id = models.UUIDField(default=uuid.uuid4, unique=True, primary_key=True, editable = False)
+
