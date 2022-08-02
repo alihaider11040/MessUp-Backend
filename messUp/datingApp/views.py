@@ -5,6 +5,9 @@ from rest_framework import status
 # Create your views here.
 
 
+
+#justcheck__
+
 @api_view(['POST'])
 def addwithphone(request): #send phone number and OTP i.e token generated for authecation
     data = request.data()
