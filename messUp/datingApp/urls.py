@@ -24,9 +24,14 @@ from rest_framework_simplejwt.views import (
     TokenRefreshView,
 )
 urlpatterns = [
+<<<<<<< Updated upstream
     path('getUser/',views.getUser),
     path('users/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('users/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 
     path('', views.getRoutes),
+=======
+    path('addwithphone/',views.addwithphone),
+    path('suggest-matches/',views.suggestmatches),
+>>>>>>> Stashed changes
 ]

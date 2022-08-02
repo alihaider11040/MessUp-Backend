@@ -20,4 +20,13 @@ def getUser(request):
     return Response()
 
 
+@api_view(['GET'])
+def suggestmatches(request):
+    #user will send a user object and in return 
+# we will provide a list of recommended users
+    userdetails= request.data()
+    interests= data['']
+
+
+
 
