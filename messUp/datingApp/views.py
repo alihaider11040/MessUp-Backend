@@ -21,6 +21,14 @@ def addwithphone(request): #send phone number and OTP i.e token generated for au
             return Response(obj, status=status.HTTP_201_CREATED)
 
 
+@api_view(['GET'])
+def getUser(request, pk):
+    profile = Profile.objects.get(id=pk)
+    serializer = ProfileSerializer(profile, many= False)
+    return Response(serializer.data)
+
+
+
 
 
 
