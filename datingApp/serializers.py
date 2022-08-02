@@ -1,3 +1,4 @@
+'''
 class VerifyCodeSerializer(serializers.Serializer):
     email = serializers.EmailField(required=True)
     def validate_email(self, email):
@@ -15,3 +16,4 @@ class VerifyCodeSerializer(serializers.Serializer):
     if VerifyCode.objects.filter(add_time__gt=one_minute_age, email=email).count():
     raise serializers.ValidationError(' Please send again in a minute ')
     return email
+'''
