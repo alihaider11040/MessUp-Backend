@@ -1,3 +1,4 @@
+import email
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
@@ -22,9 +23,9 @@ def addwithphone(request): #send phone number and OTP i.e token generated for au
 
 
 @api_view(['POST'])
-def addwithgmail(request): #send phone number and OTP i.e token generated for authecation
+def addwithgmail(request): #send email id for authentication
     data = request.data()
-    phoneNumber=data['email']
+    email=data['email']
     alreadyExists = Login.objects.filter(email=email).exists()
     if alreadyExists:
         content = {'detail': 'User Already Exist!'}
@@ -38,7 +39,7 @@ def addwithgmail(request): #send phone number and OTP i.e token generated for au
 @api_view(['POST'])
 def addwithfacebook(request): #send email id for authentication
     data = request.data()
-    phoneNumber=data['email']
+    email=data['email']
     alreadyExists = Login.objects.filter(email=email).exists()
     if alreadyExists:
         content = {'detail': 'user already exist!'}

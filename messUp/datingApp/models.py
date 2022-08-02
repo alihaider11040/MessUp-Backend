@@ -91,6 +91,7 @@ class Login(models.Model):
     
     def __str__(self):
         return str(self.email)
+        
 class Profile(models.Model):
     #user = models.OneToOneField(User, on_delete=models.CASCADE, null = True, blank = True)
     username= models.CharField(max_length=200, blank=True, null = True)
@@ -110,7 +111,8 @@ class Profile(models.Model):
     d = datetime.date(1997, 10, 19)
     date_of_birth = models.DateField(default = d)
     zodiac = models.ForeignKey(Zodiac, on_delete=models.CASCADE, null=True)
-
+    google_Id=models.CharField(primary_key=True,max_length=150)
+    fb_Id=models.CharField(primary_key=True,max_length=150)
     def __str__(self):
         return str(self.username)
 

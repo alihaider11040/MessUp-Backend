@@ -2,7 +2,7 @@ from rest_framework import serializers
 from datingApp.models import Profile
 
 
-class Userbymobileserializer(serializer.ModelSerializer):
+class Userbymobileserializer(serializers.ModelSerializer):
     class Meta:
         model= Login
         fields=[
@@ -91,9 +91,10 @@ class ProfileSerializer(serializers.Serializers):
     country=CountrySerializer(many=True)
     login=LoginSerializer(many=True)
     zodiac=ZodiacSerializer(many=True)
+
     class Meta:
         model=Profile
         fields=[
- 'username','first_name','last_name','city','bio' ,'profile_image','login','sexualOrientation','id','country' ,'profession' ,'institute','age' ,'d','date_of_birth','zodiac'
+ 'username','first_name','last_name','city','bio' ,'profile_image','login','sexualOrientation','id','country' ,'profession' ,'institute','age' ,'d','date_of_birth','zodiac', 'fb_id', 'google_id'
 
         ]
