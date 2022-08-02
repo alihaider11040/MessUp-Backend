@@ -6,6 +6,13 @@ class ProfileSerializer(serializers.ModelSerializer):
         model = Profile
         fields = '__all__'
 
+class Userbymobileserializer(serializer.ModelSerializer):
+    class Meta:
+        model= Login
+        fields=[
+            '__all__'
+        ]
+
 class RegistrationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
