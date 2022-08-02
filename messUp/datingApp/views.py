@@ -21,6 +21,23 @@ def addwithphone(request): #send phone number and OTP i.e token generated for au
             return Response(obj, status=status.HTTP_201_CREATED)
 
 
+@api_view(['POST'])
+def addwithgmail(request): #send phone number and OTP i.e token generated for authecation
+    data = request.data()
+    phoneNumber=data['email']
+    alreadyExists = Login.objects.filter(email=email).exists()
+    if alreadyExists:
+        content = {'detail': 'user already exist!'}
+        return Response(content)
+    else:
+        serializer = Userbymobileserializer(data=request.data)
+        if serializer.is_valid():
+            obj= serializer.save()
+            return Response(obj, status=status.HTTP_201_CREATED)
+
+
+
+
 @api_view(['GET'])
 def getUser(request, pk):
     profile = Profile.objects.get(id=pk)
