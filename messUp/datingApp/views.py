@@ -22,28 +22,6 @@ def addwithphone(request): #send phone number and OTP i.e token generated for au
 
 
 
-@api_view(['GET'])
-def getRoutes(request):
-
-    routes = [
-        
-        {'POST': '/api/users/token'},
-        {'POST': '/api/users/token/refresh'},
-    ]
-    return Response(routes)
-
-@api_view(['GET'])
-def getUser(request):
-    return Response()
-
-
-@api_view(['GET'])
-def suggestmatches(request):
-    #user will send a user object and in return 
-# we will provide a list of recommended users
-    userdetails= request.data()
-    interests= data['']
-
 
 
 
