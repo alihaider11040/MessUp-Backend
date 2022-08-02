@@ -1,32 +1,23 @@
+from dataclasses import fields
+from difflib import Match
 from rest_framework import serializers
-from datingApp.models import Profile
+from datingApp.models import Profile, Login, MatchMake
 
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
         fields = '__all__'
 
-class Userbymobileserializer(serializer.ModelSerializer):
+class Userbymobileserializer(serializers.ModelSerializer):
     class Meta:
         model= Login
         fields=[
             '__all__'
         ]
 
-class RegistrationSerializer(serializers.ModelSerializer):
+class RegisterMatch(serializers.ModelSerializer):
     class Meta:
-        model = Profile
-        fields = [
-            "name",
-            "Email_Address",
-            "zipcode",
-            "Date_of_Birth",
-            "password",
-
+        model = MatchMake
+        fields=[
+            '__all__'
         ]
-
-        extra_kwargs = {"password": {"write_only": True}}
-        password = self.validated_data["password"]
-        # account.set_password(password)
-        # account.save()
-        # return account

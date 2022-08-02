@@ -110,7 +110,8 @@ class Profile(models.Model):
     d = datetime.date(1997, 10, 19)
     date_of_birth = models.DateField(default = d)
     zodiac = models.ForeignKey(Zodiac, on_delete=models.CASCADE, null=True)
-
+    longitude = models.FloatField(default = 0.0, blank= True, null=True)
+    latitude = models.FloatField(default = 0.0, blank= True, null=True)
     def __str__(self):
         return str(self.username)
 
@@ -143,7 +144,7 @@ class MatchMake(models.Model):
     person1 = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name="+")
     person2 = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name="+")
 
-    match_check=models.BooleanField(default = True)
+    match_check=models.BooleanField(default = False)
     created = models.DateTimeField(auto_now_add= True)
     id = models.UUIDField(default=uuid.uuid4, unique=True, primary_key=True, editable = False)
 
