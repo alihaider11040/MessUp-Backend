@@ -1,13 +1,25 @@
-from dataclasses import field
 from rest_framework import serializers
-from django.contrib.auth.models import User
-from .models import CustomUser,UserImage
-from rest_framework.validators import UniqueValidator
+from datingApp.models import Profile
 
-
-class Userbymobileserializer(serializers.ModelSerializer):
+class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
-        model=Login
-        fields=[
-            '__all__'
-            ]
+        model = Profile
+        fields = '__all__'
+
+class RegistrationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Profile
+        fields = [
+            "name",
+            "Email_Address",
+            "zipcode",
+            "Date_of_Birth",
+            "password",
+
+        ]
+
+        extra_kwargs = {"password": {"write_only": True}}
+        password = self.validated_data["password"]
+        # account.set_password(password)
+        # account.save()
+        # return account

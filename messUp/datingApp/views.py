@@ -1,3 +1,4 @@
+
 from django.shortcuts import render
 from django.shortcuts import get_object_or_404
 from rest_framework.decorators import api_view
@@ -22,6 +23,12 @@ def addwithphone(request): #send phone number and OTP i.e token generated for au
             obj= serializer.save()
             return Response(obj, status=status.HTTP_201_CREATED)
 
+@api_view(['GET'])
+def suggestmatches(request):
+    #user will send a user object and in return 
+# we will provide a list of recommended users
+    userdetails= request.data()
+    interests= data['']
 
 
 
