@@ -94,6 +94,21 @@ class ProfileSerializer(serializers.Serializers):
     class Meta:
         model=Profile
         fields=[
- 'username','first_name','last_name','city','bio' ,'profile_image','login','sexualOrientation','id','country' ,'profession' ,'institute','age' ,'d','date_of_birth','zodiac'
+       'username',
+       'first_name', 
+       'last_name', 
+       'city', 
+       'bio' ,
+       'profile_image',
+       'login',
+       'sexualOrientation',
+       'id',
+       'country',
+       'profession',
+       'institute',
+       'age',
+       'd',
+       'date_of_birth',
+       'zodiac'
 
         ]
