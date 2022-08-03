@@ -2,6 +2,7 @@ from django.contrib import admin
 from django.urls import include, path
 from django.urls import re_path
 from django.contrib.auth import views as auth_views
+from django.views import View
 from rest_framework.urlpatterns import format_suffix_patterns
 
 from . import views
@@ -15,7 +16,7 @@ urlpatterns = [
     path('logout', auth_views.LogoutView.as_view() , name = "logout"),
     path('social-auth/', include('social_django.urls', namespace='social')),
     
-    path('UsersBy_ageAndGender/', views.UsersBy_ageAndGender.as_view()),
-
+    path('UsersBy_ageAndGender/', views.UsersBy_ageAndGender),
+    
     path("", views.home, name= "home") 
 ]

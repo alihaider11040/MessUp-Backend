@@ -5,7 +5,6 @@ from datingApp.models import Profile, Profession, Zodiac, Login, Interests, Sexu
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
-from ..datingApp.serializers import ProfileSerializer 
 
 class getUsersBy_age_and_GenderSerializer(serializers.ModelSerializer):
     class Meta: 
