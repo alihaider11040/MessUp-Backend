@@ -26,28 +26,30 @@ def SwipeRight(request):
     data = request.data()
     loggedInUserID=data['loggedInUserID']
     #loggedInUserID=request.loggedInUserID
-    rightSwippedUserID=data['rightSwippedUserID']
+    rightSwipedUserID=data['rightSwipedUserID']
     #rightSwippedUserID=request.rightSwippedUserID
-    rightSwippedAlreadyExists = MatchMake.objects.filter(person1=rightSwippedUserID).exists()
-    leftSwippedAlreadyExists = MatchMake.objects.filter(person2=loggedInUserID).exists()
-    if rightSwippedAlreadyExists and leftSwippedAlreadyExists:
-        match = MatchMake.objects.get(person1= rightSwippedUserID, person2 = loggedInUserID)
+    rightSwipedAlreadyExists = MatchMake.objects.filter(person1=rightSwipedUserID).exists()
+    leftSwipedAlreadyExists = MatchMake.objects.filter(person2=loggedInUserID).exists()
+    if rightSwipedAlreadyExists and leftSwipedAlreadyExists:
+        match = MatchMake.objects.get(person1= rightSwipedUserID, person2 = loggedInUserID)
         match.person1 = loggedInUserID
-        match.person2 = rightSwippedUserID
+        match.person2 = rightSwipedUserID
         match.match_check = True
-        match.save()        
-        Customuser = RegisterMatch(match, many=False)
-        return Response(match)
+        match.save()
+        content = {'detail': 'Its a match'}        
+        matchMade = RegisterMatch(match, many=False)
+        return Response(matchMade.data, content)
     else:
         match = MatchMake.objects.create(
             person1=data['loggedInUserID'],
             #person1=request.loggedInUserID,
-            person2=data['rightSwippedUserID'],
+            person2=data['rightSwipedUserID'],
             #person2=request.rightSwippedUserID,
             match_check=False,
         )
         match.save()
-        return Response(match, status=HTTP_201_CREATED)
+        oneSidedLike = RegisterMatch(match, many=False)
+        return Response(oneSidedLike.data, status=HTTP_201_CREATED)
  
 
 
