@@ -98,3 +98,11 @@ class ProfileSerializer(serializers.Serializers):
  'username','first_name','last_name','city','bio' ,'profile_image','login','sexualOrientation','id','country' ,'profession' ,'institute','age' ,'d','date_of_birth','zodiac', 'fb_id', 'google_id'
 
         ]
+
+
+class RegisterMatch(serializers.ModelSerializer):
+    class Meta:
+        model = MatchMake
+        fields=[
+            '__all__'
+        ]

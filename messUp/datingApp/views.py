@@ -3,7 +3,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
 from ..datingApp.serializers import ProfileSerializer, Userbymobileserializer
-from datingApp.models import Profile, Profession, Zodiac, Login, Interests, SexualOrientation, Institute
+from datingApp.models import Profile, Profession, Zodiac, Login, Interests, SexualOrientation, Institute, MatchMake
 
 
 
@@ -61,5 +61,31 @@ def getUser(request, pk):
 
 
 
+def SwipeRight(request):
+    data = request.data()
+    loggedInUserID=data['loggedInUserID']
+    #loggedInUserID=request.loggedInUserID
+    rightSwippedUserID=data['rightSwippedUserID']
+    #rightSwippedUserID=request.rightSwippedUserID
+    rightSwippedAlreadyExists = MatchMake.objects.filter(person1=rightSwippedUserID).exists()
+    leftSwippedAlreadyExists = MatchMake.objects.filter(person2=loggedInUserID).exists()
+    if rightSwippedAlreadyExists and leftSwippedAlreadyExists:
+        match = MatchMake.objects.get(person1= rightSwippedUserID, person2 = loggedInUserID)
+        match.person1 = loggedInUserID
+        match.person2 = rightSwippedUserID
+        match.match_check = True
+        match.save()        
+        Customuser = RegisterMatch(match, many=False)
+        return Response(match)
+    else:
+        match = MatchMake.objects.create(
+            person1=data['loggedInUserID'],
+            #person1=request.loggedInUserID,
+            person2=data['rightSwippedUserID'],
+            #person2=request.rightSwippedUserID,
+            match_check=False,
+        )
+        match.save()
+        return Response(match, status=HTTP_201_CREATED)
 
 

@@ -34,4 +34,5 @@ urlpatterns = [
 
     path('suggest-matches/',views.suggestmatches),
     path('getUser/<str:pk>/',views.getUser),
+    path('right-swipe/',views.SwipeRight)    ,
 ]
