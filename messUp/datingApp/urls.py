@@ -18,20 +18,13 @@ from django.contrib import admin
 from django.urls import path, include
 from . import views
 
-from rest_framework_simplejwt.views import (
-    TokenObtainPairView,
-    TokenRefreshView,
-)
+
 urlpatterns = [
-    path('getUser/',views.getUser),
-    path('users/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('users/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-    
+    path('getUser/',views.getUser),    
     path('addwithphone/',views.addwithphone),
     path('addwithgmail/',views.addwithgmail),
     path('addwithfacebook/',views.addwithfacebook),
-
-    path('suggest-matches/',views.suggestmatches),
+    #path('suggest-matches/',views.suggestmatches),
     path('getUser/<str:pk>/',views.getUser),
     path('right-swipe/',views.SwipeRight)    ,
 ]

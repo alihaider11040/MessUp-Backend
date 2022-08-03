@@ -2,7 +2,8 @@ from rest_framework import serializers
 from . import models
 from rest_framework.validators import UniqueValidator
 from dataclasses import field
-from .models import Login, Profile, Institute, Profession, Interests
+from .models import Login, Profile, Institute, Profession, Interests, SexualOrientation
+from .models import Country, Zodiac, MatchMake
 
 #testmyfetch
 
@@ -32,23 +33,19 @@ class RegistrationSerializer(serializers.ModelSerializer):
         # return account
 
 
-
-from datingApp.models import Country, Interests, SexualOrientation, Zodiac, MatchMake, Login, Profession, Institute, VerifyCode, Profile
-from rest_framework import serializers
-
-class ProfessionSerializer(serializers.Serializer):
+class ProfessionSerializer(serializers.ModelSerializer):
     class Meta:
         model=Profession
         fields=[
         'profession_name'
         ]
-class InstituteSerializer(serializers.Serializer):
+class InstituteSerializer(serializers.ModelSerializer):
     class Meta:
         model=Institute
         fields=[
         'institution_name', 'id'
         ]
-class SexualOrientationSerializer(serializers.Serializer):
+class SexualOrientationSerializer(serializers.ModelSerializer):
     class Meta:
         model=SexualOrientation
         fields=[
@@ -56,39 +53,39 @@ class SexualOrientationSerializer(serializers.Serializer):
             'id'
         ]
 
-class CountrySerializer(serializers.Serializer):
+class CountrySerializer(serializers.ModelSerializer):
     class Meta:
         model=Country
         fields=[
             'country_name','id'
         ]
 
-class ZodiacSerializer(serializers.Serializers):
+class ZodiacSerializer(serializers.ModelSerializer):
     class Meta:
         model=Zodiac
         fields=[
             'zodiac','id'
         ] 
-class InterestsSerializer(serializers.Serializers):
+class InterestsSerializer(serializers.ModelSerializer):
     class Meta:
         model=Interests
         fields=[
             'profile','interestsChoice','id'
         ]
-class MatchMakeSerializer(serializers.Serializers):
+class MatchMakeSerializer(serializers.ModelSerializer):
     class Meta:
         model=MatchMake
         fields=[
             'person1','person2','id'
         ]
-class LoginSerializer(serializers.Serializers):
+class LoginSerializer(serializers.ModelSerializer):
     class Meta:
         model=Login
         fields=[
             'phone_number','password','id'
         ]
 
-class ProfileSerializer(serializers.Serializers):
+class ProfileSerializer(serializers.ModelSerializer):
     profession=ProfessionSerializer(many=True)
     institute=InstituteSerializer(many=True)
     sexualOrientation=SexualOrientationSerializer(many=True)
