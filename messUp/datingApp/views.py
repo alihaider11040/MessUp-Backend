@@ -1,3 +1,4 @@
+import math
 from operator import truediv
 from django.shortcuts import redirect, render
 from django.http import HttpResponse
@@ -35,6 +36,8 @@ def filterUsers(request):  # we will get the age range from frontend # and sexua
     age_min = obj_data['age_min']
     age_max = obj_data['age_max']
     ID = obj_data['ID']
+
+
     obj=get_object_or_404(Profile,id=ID)
     # qs = Profile.objects.values_list('id', 'name') 
     # sex=qs.s
@@ -50,3 +53,6 @@ def filterUsers(request):  # we will get the age range from frontend # and sexua
         serializer= filterUsers(queryset, many=True) # serialize all the objects # take objects & convert to JSON # many= true means we have many objects so DONOT stop after 1 JSON obj
         return Response(serializer.data) # return JSON response 
 
+# def getUsersWithinDistance(long_cord, lat_cord):
+#     users_list =[] 
+#     dist = math.sqrt((long_cord - x1)**2 + (long_cord - y1)**2)
