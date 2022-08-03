@@ -1,4 +1,5 @@
 import datetime
+from distutils.command.upload import upload
 from django.db import models
 from django.contrib.auth.models import User
 from datetime import date
@@ -10,6 +11,7 @@ class SexualOrientation(models.Model):
     ('bisexual', 'BISEXUAL'),
     ('gay','GAY'),
     ('lesbian','LESBIAN'),
+    ('all','ALL'),
     )
 
     choice = models.CharField(max_length=50, choices=SEXUAL_ORIENTATION_CHOICES)
@@ -91,6 +93,7 @@ class Login(models.Model):
     
     def __str__(self):
         return str(self.email)
+
 class Profile(models.Model):
     #user = models.OneToOneField(User, on_delete=models.CASCADE, null = True, blank = True)
     username= models.CharField(max_length=200, blank=True, null = True)
@@ -98,7 +101,7 @@ class Profile(models.Model):
     last_name = models.CharField(max_length=200, blank=True, null = True)
     city = models.CharField(max_length=200, blank = False, null = False)
     bio = models.TextField(blank = True, null= True)
-    profile_image = models.ImageField(null=True, blank = True, upload_to='profiles/', default = 'profiles/user-default.png')
+    
     created = models.DateTimeField(auto_now_add= True)
     login = models.ForeignKey(Login, on_delete=models.CASCADE, null=True)
     sexualOrientation = models.ForeignKey(SexualOrientation,on_delete=models.CASCADE)
@@ -115,6 +118,19 @@ class Profile(models.Model):
     def __str__(self):
         return str(self.username)
 
+class PictureGallery(models.Model):
+    created = models.DateTimeField(auto_now_add= True)
+    id = models.UUIDField(default=uuid.uuid4, unique=True, primary_key=True, editable = False)
+    user = models.ForeignKey(Profile, on_delete=models.CASCADE, null = True)
+    profile_image = models.ImageField(null=False, blank = False, upload_to='profiles/', default = "user-default.png")
+    image1 = models.ImageField(null=False,blank=False, upload_to='profiles/', default = "user-default.png")
+    image2 = models.ImageField(null=True,blank=True, upload_to='profiles/', default = "user-default.png")
+    image3 = models.ImageField(null=True,blank=True, upload_to='profiles/', default = "user-default.png")
+    image4 = models.ImageField(null=True,blank=True, upload_to='profiles/', default = "user-default.png")
+    image5 = models.ImageField(null=True,blank=True, upload_to='profiles/', default = "user-default.png")
+
+    def __str__(self):
+        return str(self.user.username)
 
 class Interests(models.Model):
     INTEREST_CHOICES = (
@@ -143,7 +159,6 @@ class Interests(models.Model):
 class MatchMake(models.Model):
     person1 = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name="+")
     person2 = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name="+")
-
     match_check=models.BooleanField(default = False)
     created = models.DateTimeField(auto_now_add= True)
     id = models.UUIDField(default=uuid.uuid4, unique=True, primary_key=True, editable = False)
@@ -154,11 +169,8 @@ class MatchMake(models.Model):
 class BlockProfile(models.Model):
     user1 = models.ForeignKey(Profile, blank= True, null=True,on_delete=models.CASCADE, related_name="+")
     user2 = models.ForeignKey(Profile, blank=True, null= True,on_delete=models.CASCADE, related_name="+")
-    block_check=models.BooleanField(default = True)
+    block_check=models.BooleanField(default = False)
     created = models.DateTimeField(auto_now_add= True)
     id = models.UUIDField(default=uuid.uuid4, unique=True, primary_key=True, editable = False)
 
 
-class PictureGallery(models.Model):
-    created = models.DateTimeField(auto_now_add= True)
-    id = models.UUIDField(default=uuid.uuid4, unique=True, primary_key=True, editable = False)
