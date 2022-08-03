@@ -111,8 +111,8 @@ class Profile(models.Model):
     d = datetime.date(1997, 10, 19)
     date_of_birth = models.DateField(default = d)
     zodiac = models.ForeignKey(Zodiac, on_delete=models.CASCADE, null=True)
-    google_Id=models.CharField(primary_key=True,max_length=150)
-    fb_Id=models.CharField(primary_key=True,max_length=150)
+    #google_Id=models.CharField(primary_key=True,max_length=150)
+    #fb_Id=models.CharField(primary_key=True,max_length=150)
     longitude = models.FloatField(default = 0.0, blank= True, null=True)
     latitude = models.FloatField(default = 0.0, blank= True, null=True)
 
