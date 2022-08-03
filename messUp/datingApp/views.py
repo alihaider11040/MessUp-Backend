@@ -8,8 +8,8 @@ from . import models , serializers
 
 @api_view(['POST'])
 def addwithphone(request): #send phone number and OTP i.e token generated for authecation
-    data = request.data()
-    phoneNumber=data['phoneNumber']
+    #data = request.data()
+    phoneNumber=request.GET('phoneNumber')
     alreadyExists = Login.objects.filter(phone_number=phoneNumber).exists()
     if alreadyExists:
         content = {'detail': 'user already exist!'}

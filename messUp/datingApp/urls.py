@@ -26,5 +26,6 @@ urlpatterns = [
     path('addwithfacebook/',views.addwithfacebook),
     #path('suggest-matches/',views.suggestmatches),
     path('getUser/<str:pk>/',views.getUser),
+    #path('signup/', views.signup),
     path('right-swipe/',views.SwipeRight)    ,
 ]
