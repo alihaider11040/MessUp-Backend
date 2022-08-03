@@ -1,10 +1,11 @@
-from rest_framework.status import HTTP_201_CREATED, HTT
+from rest_framework.status import HTTP_201_CREATED
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
-from ..datingApp.serializers import ProfileSerializer, RegisterMatch, Userbymobileserializer
-from datingApp.models import Profile, Profession, Zodiac, Login, Interests, SexualOrientation, Institute, MatchMake
-
+from rest_framework.request import Request
+from datingApp.serializers import ProfileSerializer, RegisterMatch, Userbymobileserializer
+from datingApp.models import Profile, Profession, Zodiac, Login, Interests, SexualOrientation, Institute
+from datingApp.models import MatchMake
 
 
 @api_view(['POST'])
@@ -19,14 +20,14 @@ def addwithphone(request): #send phone number and OTP i.e token generated for au
         serializer = Userbymobileserializer(data=request.data)
         if serializer.is_valid():
             obj= serializer.save()
-            return Response(obj, status=status.HTTP_201_CREATED)
+            return Response(obj, status=HTTP_201_CREATED)
 
-
-@api_view(['POST'])
-def MatchMake(request): #send phone number and OTP i.e token generated for authecation
+def SwipeRight(request):
     data = request.data()
     loggedInUserID=data['loggedInUserID']
+    #loggedInUserID=request.loggedInUserID
     rightSwippedUserID=data['rightSwippedUserID']
+    #rightSwippedUserID=request.rightSwippedUserID
     rightSwippedAlreadyExists = MatchMake.objects.filter(person1=rightSwippedUserID).exists()
     leftSwippedAlreadyExists = MatchMake.objects.filter(person2=loggedInUserID).exists()
     if rightSwippedAlreadyExists and leftSwippedAlreadyExists:
@@ -36,12 +37,17 @@ def MatchMake(request): #send phone number and OTP i.e token generated for authe
         match.match_check = True
         match.save()        
         Customuser = RegisterMatch(match, many=False)
-        return Response(match, status=HTT)
+        return Response(match)
     else:
-        serializer = RegisterMatch(data=request.data)
-        if serializer.is_valid():
-            obj= serializer.save()
-            return Response(obj, status=HTTP_201_CREATED)
-
+        match = MatchMake.objects.create(
+            person1=data['loggedInUserID'],
+            #person1=request.loggedInUserID,
+            person2=data['rightSwippedUserID'],
+            #person2=request.rightSwippedUserID,
+            match_check=False,
+        )
+        match.save()
+        return Response(match, status=HTTP_201_CREATED)
+ 
 
 

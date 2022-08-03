@@ -24,8 +24,9 @@ from rest_framework_simplejwt.views import (
     TokenRefreshView,
 )
 urlpatterns = [
-    path('getUser/',views.getUser),
+   # path('getUser/',views.getUser),
     path('addwithphone/',views.addwithphone),
-    path('suggest-matches/',views.suggestmatches),
-
+    #path('suggest-matches/',views.suggestmatches),
+    path('right-swipe/',views.SwipeRight)    
+    
 ]

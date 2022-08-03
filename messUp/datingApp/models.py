@@ -147,7 +147,9 @@ class MatchMake(models.Model):
     match_check=models.BooleanField(default = False)
     created = models.DateTimeField(auto_now_add= True)
     id = models.UUIDField(default=uuid.uuid4, unique=True, primary_key=True, editable = False)
-
+    
+    def __str__(self):
+        return str(self.match_check)
 
 class BlockProfile(models.Model):
     user1 = models.ForeignKey(Profile, blank= True, null=True,on_delete=models.CASCADE, related_name="+")
