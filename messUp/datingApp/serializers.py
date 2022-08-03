@@ -1,10 +1,14 @@
 from rest_framework import serializers
-from datingApp.models import Profile
+from . import models
+from rest_framework.validators import UniqueValidator
+from dataclasses import field
+from .models import Login, Profile, Institute, Profession, Interests
 
+#testmyfetch
 
 class Userbymobileserializer(serializers.ModelSerializer):
     class Meta:
-        model= Login
+        model = Login
         fields=[
             '__all__'
         ]
@@ -21,8 +25,8 @@ class RegistrationSerializer(serializers.ModelSerializer):
 
         ]
 
-        extra_kwargs = {"password": {"write_only": True}}
-        password = self.validated_data["password"]
+       # extra_kwargs = {"password": {"write_only": True}}
+        #password = self.validated_data["password"]
         # account.set_password(password)
         # account.save()
         # return account
