@@ -37,7 +37,21 @@ class Institute(models.Model):
     def __str__(self):
         return str(self.institution_name)
 class Zodiac(models.Model):
-    zodiac =  models.CharField(max_length=100, blank=False, null = False)
+    ZODIAC_CHOICES=(
+        ('Capricon','Capricon'),
+        ('Aquarius','Aquarius'),
+        ('Pisces','Pisces'),
+        ('Aries','Aries'),
+        ('Taurus','Taurus'),
+        ('Gemini','Gemini'),
+        ('Cancer','Cancer'),
+        ('Leo','Leo'),
+        ('Virgo','Virgo'),
+        ('Libra','Libra'),
+        ('Scorpio','Scorpio'),
+        ('Sagittarius','Sagittarius'),
+    )
+    zodiac =  models.CharField(max_length=100, choices=ZODIAC_CHOICES)
   
     created = models.DateTimeField(auto_now_add= True)
     id = models.UUIDField(default=uuid.uuid4, unique=True, primary_key=True, editable = False)
