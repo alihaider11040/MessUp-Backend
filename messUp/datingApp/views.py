@@ -88,3 +88,34 @@ def SwipeRight(request):
         match.save()
         oneSidedLike = RegisterMatch(match, many=False)
         return Response(oneSidedLike.data, status=HTTP_201_CREATED)
+
+
+
+
+@api_view(['POST'])
+def SwipeDown(request):
+    data=request.data()
+    loggedInUserID=data['loggedInUserID']
+    DownSwippedUserID=data['downSwippedUserID']
+
+    DownSwippedAlreadyExists = MatchMake.objects.filter(user1=DownSwippedUserID).exists()
+    loggedInAlreadyExists = MatchMake.objects.filter(user2=loggedInUserID).exists()
+
+
+    DownSwippedAlreadyExists2 = MatchMake.objects.filter(user2=DownSwippedUserID).exists()
+    loggedInAlreadyExists2 = MatchMake.objects.filter(user1=loggedInUserID).exists()
+    
+    if (DownSwippedAlreadyExists and loggedInAlreadyExists) or (DownSwippedAlreadyExists2 and loggedInAlreadyExists2):
+        content = {'message': 'Already Blocked'}
+        return Response(content)
+    else:
+        block = BlockProfile.objects.create(
+            user1=data['loggedInUserID'],
+            #person1=request.loggedInUserID,
+            user2=data['rightSwippedUserID'],
+            #person2=request.rightSwippedUserID,
+            block_check=True,
+        )
+        block.save()
+        BlockProfileMade = BlockProfileSerializer(block, many=False)
+        return Response(BlockProfileMade, status=HTTP_201_CREATED)
