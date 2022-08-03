@@ -6,8 +6,8 @@ from rest_framework.views import APIView # used so that views can return API dat
 from rest_framework.response import Response # this gets our status or a response # returns 200 if everything good
 from rest_framework import status
 from datingApp.models import Profile, Profession, Zodiac, Login, Interests, SexualOrientation, Institute
-from . serializers import getUsersBy_age_and_GenderSerializer
-
+from datingApp.serializers import getUsersBy_age_and_GenderSerializer
+from rest_framework.decorators import api_view
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth import authenticate, login
@@ -45,3 +45,8 @@ def UsersBy_ageAndGender(request):  # we will get the age range from frontend # 
         queryset = Profile.objects.filter(age__gte=age_min, age__lte=age_max, SexualOrientation=Sexual_Orientation )
         serializer= getUsersBy_age_and_GenderSerializer(queryset, many=True) # serialize all the objects # take objects & convert to JSON # many= true means we have many objects so DONOT stop after 1 JSON obj
         return Response(serializer.data) # return JSON response 
+
+'''
+qs = Blog.objects.values_list('id', 'name')
+ =modelname.object.values_list('sexeuloritaion')
+'''
