@@ -6,15 +6,7 @@ from datetime import date
 import uuid
 
 class SexualOrientation(models.Model):
-    SEXUAL_ORIENTATION_CHOICES = (
-    ('straight','STRAIGHT'),
-    ('bisexual', 'BISEXUAL'),
-    ('gay','GAY'),
-    ('lesbian','LESBIAN'),
-    ('all','ALL'),
-    )
-
-    choice = models.CharField(max_length=50, choices=SEXUAL_ORIENTATION_CHOICES)
+    choice = models.CharField(max_length=50, blank=False, null = False)
     created = models.DateTimeField(auto_now_add= True)
     id = models.UUIDField(default=uuid.uuid4, unique=True, primary_key=True, editable = False)
 
@@ -30,15 +22,7 @@ class Country(models.Model):
         return str(self.country_name)
 
 class Profession(models.Model):
-    PROFESSION_CHOICES = (
-    ('doctor','Doctor'),
-    ('accountant', 'Accountant'),
-    ('engineer','Engineer'),
-    ('teacher','Teacher'),
-    ('manager','Manager'),
-    ('business','Business Man'),
-    )
-    profession_name = models.CharField(max_length=200,  choices=PROFESSION_CHOICES)
+    profession_name = models.CharField(max_length=200, blank=False, null = False)
     created = models.DateTimeField(auto_now_add= True)
     id = models.UUIDField(default=uuid.uuid4, unique=True, primary_key=True, editable = False)
    
@@ -46,37 +30,14 @@ class Profession(models.Model):
         return str(self.profession_name)
 
 class Institute(models.Model):
-    INSTITUTE_CHOICES = (
-    ('nuces','National University of Computer and Emerging Sciences'),
-    ('nust', 'National University of Sciences and Technology'),
-    ('giki','Ghulam Ishaq Khan Institute'),
-    ('ucp','University of Centeral Punjab'),
-    ('gcu','Government College University'),
-    ('pu','Punjab University'),
-    )
-    institution_name = models.CharField(max_length=200,  choices=INSTITUTE_CHOICES)
+    institution_name = models.CharField(max_length=200, blank=False, null = False)
     created = models.DateTimeField(auto_now_add= True)
     id = models.UUIDField(default=uuid.uuid4, unique=True, primary_key=True, editable = False)
    
     def __str__(self):
         return str(self.institution_name)
 class Zodiac(models.Model):
-    ZODIAC_SIGNS = (
-    ('aries','Aries'),
-    ('taurus','Taurus'),
-    ('gemini','Gemini'),
-    ('cancer','Cancer'),
-    ('leo','Leo'),
-    ('virgo','Virgo'),
-    ('libra','Libra'),
-    ('scorpio','Scorpio'),
-    ('sagittarius','Sagittarius'),
-    ('capricon','Capricon'),
-    ('aquarius','Aquarius'),
-    ('pisces','Pisces'),
-    )
-
-    zodiac =  models.CharField(max_length=100, choices=ZODIAC_SIGNS)
+    zodiac =  models.CharField(max_length=100, blank=False, null = False)
   
     created = models.DateTimeField(auto_now_add= True)
     id = models.UUIDField(default=uuid.uuid4, unique=True, primary_key=True, editable = False)
@@ -133,22 +94,8 @@ class PictureGallery(models.Model):
         return str(self.user.username)
 
 class Interests(models.Model):
-    INTEREST_CHOICES = (
-    ('selfcare','Self-Care'),
-    ('yoga', 'Yoga'),
-    ('writing','writing'),
-    ('meditaion','Meditation'),
-    ('sushi','Sushi'),
-    ('hockey','Hockey'),
-    ('basketball','Basketball'),
-    ('poetry','Slam Poetry'),
-    ('hworkouts','Home Workouts'),
-    ('manga','Manga'),
-    ('makeup','Make-up'),
-    )
-
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
-    interestsChoice = models.CharField(max_length=100, choices=INTEREST_CHOICES)
+    interestsChoice = models.CharField(max_length=100, blank=False, null = False)
     created = models.DateTimeField(auto_now_add= True)
     id = models.UUIDField(default=uuid.uuid4, unique=True, primary_key=True, editable = False)
 
