@@ -14,25 +14,6 @@ class Userbymobileserializer(serializers.ModelSerializer):
             '__all__'
         ]
 
-class RegistrationSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Profile
-        fields = [
-            "name",
-            "Email_Address",
-            "zipcode",
-            "Date_of_Birth",
-            "password",
-
-        ]
-
-       # extra_kwargs = {"password": {"write_only": True}}
-        #password = self.validated_data["password"]
-        # account.set_password(password)
-        # account.save()
-        # return account
-
-
 class ProfessionSerializer(serializers.ModelSerializer):
     class Meta:
         model=Profession
@@ -43,60 +24,59 @@ class InstituteSerializer(serializers.ModelSerializer):
     class Meta:
         model=Institute
         fields=[
-        'institution_name', 'id'
+        'institution_name'
         ]
 class SexualOrientationSerializer(serializers.ModelSerializer):
     class Meta:
         model=SexualOrientation
         fields=[
-            'choice',
-            'id'
+            'choice'
         ]
 
 class CountrySerializer(serializers.ModelSerializer):
     class Meta:
         model=Country
         fields=[
-            'country_name','id'
+            'country_name'
         ]
 
 class ZodiacSerializer(serializers.ModelSerializer):
     class Meta:
         model=Zodiac
         fields=[
-            'zodiac','id'
+            'zodiac'
         ] 
 class InterestsSerializer(serializers.ModelSerializer):
     class Meta:
         model=Interests
         fields=[
-            'profile','interestsChoice','id'
+            'profile','interestsChoice'
         ]
 class MatchMakeSerializer(serializers.ModelSerializer):
     class Meta:
         model=MatchMake
         fields=[
-            'person1','person2','id'
+            'person1','person2','match_check'
         ]
 class LoginSerializer(serializers.ModelSerializer):
     class Meta:
         model=Login
         fields=[
-            'phone_number','password','id'
+            'phone_number','token','email'
         ]
 
 class ProfileSerializer(serializers.ModelSerializer):
-    profession=ProfessionSerializer(many=True)
-    institute=InstituteSerializer(many=True)
-    sexualOrientation=SexualOrientationSerializer(many=True)
-    country=CountrySerializer(many=True)
-    login=LoginSerializer(many=True)
-    zodiac=ZodiacSerializer(many=True)
+    profession=ProfessionSerializer(many=False)
+    institute=InstituteSerializer(many=False)
+    sexualOrientation=SexualOrientationSerializer(many=False)
+    country=CountrySerializer(many=False)
+    login=LoginSerializer(many=False)
+    zodiac=ZodiacSerializer(many=False)
 
     class Meta:
         model=Profile
         fields=[
- 'username','first_name','last_name','city','bio' ,'profile_image','login','sexualOrientation','id','country' ,'profession' ,'institute','age' ,'d','date_of_birth','zodiac', 'fb_id', 'google_id'
+ 'username','first_name','last_name','city','bio','gender','login','sexualOrientation','country' ,'profession' ,'institute','age','date_of_birth','zodiac'
 
         ]
 
