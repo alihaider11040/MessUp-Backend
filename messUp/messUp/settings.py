@@ -92,7 +92,7 @@ WSGI_APPLICATION = 'messUp.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'MessUp_Database',
+        'NAME': 'DataBase',
         'USER': 'postgres',
         'PASSWORD': 'qwerty',
         'HOST': 'localhost',
