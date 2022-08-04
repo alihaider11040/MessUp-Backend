@@ -1,3 +1,4 @@
+from email import message
 from rest_framework.status import HTTP_201_CREATED
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
@@ -21,7 +22,7 @@ def addwithphone(request): #send phone number and OTP i.e token generated for au
         serializer = Userbymobileserializer(data=request.data)
         if serializer.is_valid():
             obj= serializer.save()
-            return Response(obj, status=status.HTTP_201_CREATED)
+            return Response(obj, status=HTTP_201_CREATED)
 
 
 @api_view(['POST'])
@@ -36,7 +37,7 @@ def addwithgmail(request): #send email id for authentication
         serializer = Userbymobileserializer(data=request.data)
         if serializer.is_valid():
             obj= serializer.save()
-            return Response(obj, status=status.HTTP_201_CREATED)
+            return Response(obj, status=HTTP_201_CREATED)
 
 @api_view(['POST'])
 def addwithfacebook(request): #send email id for authentication
@@ -50,7 +51,7 @@ def addwithfacebook(request): #send email id for authentication
         serializer = Userbymobileserializer(data=request.data)
         if serializer.is_valid():
             obj= serializer.save()
-            return Response(obj, status=status.HTTP_201_CREATED)
+            return Response(obj, status=HTTP_201_CREATED)
 
 
 @api_view(['GET'])
@@ -116,3 +117,24 @@ def SwipeDown(request):
         block.save()
         BlockProfileMade = BlockProfileSerializer(block, many=False)
         return Response(BlockProfileMade, status=HTTP_201_CREATED)
+    return Response()
+
+
+@api_view(['DELETE'])
+def Unblock(request):
+    data=request.data()
+    loggedInUserID=data['loggedInUserID']
+    UnblockUserID=data['downSwippedUserID']
+
+
+    UnblockAlreadyExists = MatchMake.objects.filter(user2=UnblockUserID).exists()
+    loggedInAlreadyExists = MatchMake.objects.filter(user1=loggedInUserID).exists()
+
+    if loggedInAlreadyExists and UnblockAlreadyExists:
+        unblockProfile = MatchMake.objects.delete(person1= loggedInUserID, person2 = UnblockUserID)
+        unblockProfile.save()
+        content = {'message': 'Deleted Successfully'}
+        return Response(content)
+    else:
+        content = {'message': 'Record does not exist'}
+        return Response(content)
