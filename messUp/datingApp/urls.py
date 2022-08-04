@@ -26,5 +26,9 @@ urlpatterns = [
     path('addwithfacebook/',views.addwithfacebook),
     #path('suggest-matches/',views.suggestmatches),
     path('getUser/<str:pk>/',views.getUser),
-    path('right-swipe/',views.SwipeRight)    ,
+    path('right-swipe/',views.MyAPIOne), 
+    path('down-swipe/',views.SwipeDown), 
+    
+    path('unblock/',views.Unblock),
+    
 ]

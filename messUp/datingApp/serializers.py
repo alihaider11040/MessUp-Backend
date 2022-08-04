@@ -76,27 +76,27 @@ class MatchMakeSerializer(serializers.ModelSerializer):
     class Meta:
         model=MatchMake
         fields=[
-            'person1','person2','id'
+            'person1','person2','id','match_check' 
         ]
 class LoginSerializer(serializers.ModelSerializer):
     class Meta:
         model=Login
         fields=[
-            'phone_number','password','id'
+            'phone_number','token','id', 'email'
         ]
 
 class ProfileSerializer(serializers.ModelSerializer):
-    profession=ProfessionSerializer(many=True)
-    institute=InstituteSerializer(many=True)
-    sexualOrientation=SexualOrientationSerializer(many=True)
-    country=CountrySerializer(many=True)
-    login=LoginSerializer(many=True)
-    zodiac=ZodiacSerializer(many=True)
+    profession=ProfessionSerializer(many=False)
+    institute=InstituteSerializer(many=False)
+    sexualOrientation=SexualOrientationSerializer(many=False)
+    country=CountrySerializer(many=False)
+    login=LoginSerializer(many=False)
+    zodiac=ZodiacSerializer(many=False)
 
     class Meta:
         model=Profile
         fields=[
- 'username','first_name','last_name','city','bio' ,'profile_image','login','sexualOrientation','id','country' ,'profession' ,'institute','age' ,'d','date_of_birth','zodiac', 'fb_id', 'google_id'
+            'username','first_name','last_name','city','bio' ,'login','sexualOrientation','id','country' ,'profession' ,'institute','age','date_of_birth','zodiac'
 
         ]
 
@@ -105,7 +105,7 @@ class RegisterMatch(serializers.ModelSerializer):
     class Meta:
         model = MatchMake
         fields=[
-            '__all__'
+            'person1', 'person2','match_check'
         ]
 
 
@@ -113,5 +113,5 @@ class BlockProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = BlockProfile
         fields=[
-            '__all__'
+            'user1', 'user2','block_check'
         ]
