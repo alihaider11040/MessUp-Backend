@@ -152,3 +152,12 @@ class Notifications(models.Model):
 
     def __str__(self):
         return str(self.notification_message)
+
+
+class InterestsID(models.Model):
+    user = models.ForeignKey(Profile, blank= True, null=True,on_delete=models.CASCADE)
+    interest = models.ForeignKey(Interests, blank= True, null=True,on_delete=models.CASCADE)
+    created = models.DateTimeField(auto_now_add= True)
+    
+    def __str__(self):
+        return str(self.user.username + " " + self.interest.interestsChoice)
