@@ -48,18 +48,16 @@ def filterUsers(request):  # we will get the age range from frontend # and sexua
     qs=qs.sexualOrientation
     print(qs)
 
+    '''Get users within dist_range of longitude & Latitude'''
     dlat = Radians(F('latitude') - current_lat)
     dlong = Radians(F('longitude') - current_long)
-
     a = (Power(Sin(dlat/2), 2) + Cos(Radians(current_lat)) 
     * Cos(Radians(F('latitude'))) * Power(Sin(dlong/2), 2)
     )
-
     c = 2 * ATan2(Sqrt(a), Sqrt(1-a))
     d = 6371 * c
-
     LocationsNearMe = Profile.objects.annotate(distance=d).order_by('distance').filter(distance__lt=dist_range)
-
+    '''filter on sexualOrientation+ageLimit+distance'''
     if qs is 'all':
         queryset = Profile.objects.filter(age__gte=age_min, age__lte=age_max,id__in=LocationsNearMe).exclude(id=ID)
         print("all")
@@ -68,17 +66,4 @@ def filterUsers(request):  # we will get the age range from frontend # and sexua
         print("not all")
     serializer= filterUsersSerializer(queryset, many=True) # serialize all the objects # take objects & convert to JSON # many= true means we have many objects so DONOT stop after 1 JSON obj
     return Response(serializer.data) # return JSON response 
-
-
-#     dlat = Radians(F('latitude') - current_lat)
-#     dlong = Radians(F('longitude') - current_long)
-
-#     a = (Power(Sin(dlat/2), 2) + Cos(Radians(current_lat)) 
-#     * Cos(Radians(F('latitude'))) * Power(Sin(dlong/2), 2)
-#     )
-
-#     c = 2 * ATan2(Sqrt(a), Sqrt(1-a))
-#     d = 6371 * c
-
-#     LocationsNearMe = Profile.objects.annotate(distance=d).order_by('distance').filter(distance__lt=1000)
 
