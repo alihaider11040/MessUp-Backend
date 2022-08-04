@@ -1,3 +1,7 @@
+from __future__ import print_function
+#from geopy.distance import geodesic as GD
+import geopy.distance
+
 import email
 import math
 from operator import truediv
@@ -43,11 +47,16 @@ def filterUsers(request):  # we will get the age range from frontend # and sexua
 
     if SexualOrientation is 'all':
         queryset = Profile.objects.filter(age__gte=age_min, age__lte=age_max)
+        
     else:
         queryset = Profile.objects.filter(age__gte=age_min, age__lte=age_max, SexualOrientation=Sexual_Orientation )
         serializer= filterUsers(queryset, many=True) # serialize all the objects # take objects & convert to JSON # many= true means we have many objects so DONOT stop after 1 JSON obj
         return Response(serializer.data) # return JSON response 
 
-# def getUsersWithinDistance(long_cord, lat_cord):
-#     users_list =[] 
-#     dist = math.sqrt((long_cord - x1)**2 + (lat_cord - y1)**2)
+def getUsersWithinDistance(long_cord, lat_cord):
+    users_list =[] 
+    #dist = math.sqrt((long_cord - x1)**2 + (lat_cord - y1)**2)
+    coords_1 = (52.2296756, 21.0122287)
+    coords_2 = (52.406374, 16.9251681)
+    #print geopy.distance.geodesic(coords_1, coords_2).km
+    print (geopy.distance.VincentyDistance(coords_1, coords_2).km)
