@@ -1,16 +1,11 @@
-from email import message
-import requests
 from rest_framework.status import HTTP_201_CREATED
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
-from rest_framework.request import Request
-from datingApp.serializers import ProfileSerializer, RegisterMatch, Userbymobileserializer
+from datingApp.serializers import ProfileSerializer, RegisterMatch, Userbymobileserializer, MatchMakeSerializer, BlockProfileSerializer
 from datingApp.models import Profile, Profession, Zodiac, Login, Interests, SexualOrientation, Institute
 from datingApp.models import MatchMake, BlockProfile
 from rest_framework import status
-
-
 
 @api_view(['POST'])
 def addwithphone(request): #send phone number and OTP i.e token generated for authecation
@@ -58,70 +53,72 @@ def addwithfacebook(request): #send email id for authentication
 
 @api_view(['GET'])
 def getUser(request, pk):
-    profile = Profile.objects.get(id=pk)
-    serializer = ProfileSerializer(profile, many= False)
-    return Response(serializer.data)
 
+    profile = Profile.objects.filter(id=pk).exists()
+    if profile:
+        profileDetails = Profile.objects.get(id=pk)
+        serializer = ProfileSerializer(profileDetails, many= False)
+        return Response(serializer.data)
+    else:
+        content = {'detail': 'user does not exist!'}
+        return Response( content, status=status.HTTP_404_NOT_FOUND)
 
-
-
-
+@api_view(['POST', 'PUT'])
 def SwipeRight(request):
-    data = request.data()
-    loggedInUserID=data['loggedInUserID']
-    #loggedInUserID=request.loggedInUserID
-    rightSwipedUserID=data['rightSwipedUserID']
-    #rightSwippedUserID=request.rightSwippedUserID
+    data = request.data
+    loggedInUserID=data['person1']
+    rightSwipedUserID=data['person2']
     rightSwipedAlreadyExists = MatchMake.objects.filter(person1=rightSwipedUserID).exists()
     leftSwipedAlreadyExists = MatchMake.objects.filter(person2=loggedInUserID).exists()
-    if rightSwipedAlreadyExists and leftSwipedAlreadyExists:
-        match = MatchMake.objects.get(person1= rightSwipedUserID, person2 = loggedInUserID)
-        match.person1 = loggedInUserID
-        match.person2 = rightSwipedUserID
+    rightSwipedAlreadyExists2 = MatchMake.objects.filter(person2=rightSwipedUserID).exists()
+    leftSwipedAlreadyExists2 = MatchMake.objects.filter(person1=loggedInUserID).exists()
+     
+    if (rightSwipedAlreadyExists and leftSwipedAlreadyExists) or (rightSwipedAlreadyExists2 and leftSwipedAlreadyExists2):
+        match = MatchMake.objects.get(person1=data['person1'], person2 = data['person2'])
         match.match_check = True
-        match.save()
-        content = {'detail': 'Its a match'}        
+        match.save()     
         matchMade = RegisterMatch(match, many=False)
-        return Response(matchMade.data, content)
+        return Response(matchMade.data)
     else:
-        match = MatchMake.objects.create(
-            person1=data['loggedInUserID'],
-            #person1=request.loggedInUserID,
-            person2=data['rightSwipedUserID'],
-            #person2=request.rightSwippedUserID,
-            match_check=False,
-        )
-        match.save()
-        oneSidedLike = RegisterMatch(match, many=False)
-        return Response(oneSidedLike.data, status=HTTP_201_CREATED)
-
-
-
+        oneSidedLike = RegisterMatch(data=request.data, many=False)
+        if oneSidedLike.is_valid():
+            oneSidedLike.save()
+            return Response(oneSidedLike.data, status=status.HTTP_201_CREATED)
 
 @api_view(['POST'])
 def SwipeDown(request):
-    data=request.data()
-    loggedInUserID=data['loggedInUserID']
-    DownSwippedUserID=data['downSwippedUserID']
+    data=request.data
+    loggedInUserID=data['user1']
+    DownSwippedUserID=data['user2']
+    block_check = data['block_check']
 
-    DownSwippedAlreadyExists = MatchMake.objects.filter(user1=DownSwippedUserID).exists()
-    loggedInAlreadyExists = MatchMake.objects.filter(user2=loggedInUserID).exists()
-
-
-    DownSwippedAlreadyExists2 = MatchMake.objects.filter(user2=DownSwippedUserID).exists()
-    loggedInAlreadyExists2 = MatchMake.objects.filter(user1=loggedInUserID).exists()
+    DownSwippedAlreadyExists = BlockProfile.objects.filter(user1=DownSwippedUserID).exists()
+    loggedInAlreadyExists = BlockProfile.objects.filter(user2=loggedInUserID).exists()
+    DownSwippedAlreadyExists2 = BlockProfile.objects.filter(user2=DownSwippedUserID).exists()
+    loggedInAlreadyExists2 = BlockProfile.objects.filter(user1=loggedInUserID).exists()
     
     if (DownSwippedAlreadyExists and loggedInAlreadyExists) or (DownSwippedAlreadyExists2 and loggedInAlreadyExists2):
         content = {'message': 'Already Blocked'}
         return Response(content)
     else:
-        block = BlockProfile.objects.create(
-            user1=data['loggedInUserID'],
-            #person1=request.loggedInUserID,
-            user2=data['rightSwippedUserID'],
-            #person2=request.rightSwippedUserID,
-            block_check=True,
-        )
-        block.save()
-        BlockProfileMade = BlockProfileSerializer(block, many=False)
-        return Response(BlockProfileMade, status=HTTP_201_CREATED)
+        BlockProfileMade = BlockProfileSerializer(data=request.data)
+        if BlockProfileMade.is_valid():
+            BlockProfileMade.save()
+            return Response(BlockProfileMade.data, status=status.HTTP_201_CREATED)
+
+@api_view(['DELETE'])
+def Unblock(request):
+    data=request.data
+    loggedInUserID=data['loggedInUserID']
+    UnblockUserID=data['toBeUnblockedUserID']
+
+    UnblockAlreadyExists = BlockProfile.objects.filter(user2=UnblockUserID).exists()
+    loggedInAlreadyExists = BlockProfile.objects.filter(user1=loggedInUserID).exists()
+
+    if loggedInAlreadyExists and UnblockAlreadyExists:
+        unblockProfile = BlockProfile.objects.filter(user1= loggedInUserID, user2 = UnblockUserID).delete()
+        content = {'message': 'Deleted Successfully'}
+        return Response(content)
+    else:
+        content = {'message': 'Record does not exist'}
+        return Response(content)

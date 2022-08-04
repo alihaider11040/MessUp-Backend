@@ -3,7 +3,7 @@ from . import models
 from rest_framework.validators import UniqueValidator
 from dataclasses import field
 from .models import Login, Profile, Institute, Profession, Interests, SexualOrientation
-from .models import Country, Zodiac, MatchMake
+from .models import Country, Zodiac, MatchMake, BlockProfile
 
 #testmyfetch
 
@@ -85,5 +85,12 @@ class RegisterMatch(serializers.ModelSerializer):
     class Meta:
         model = MatchMake
         fields=[
-            '__all__'
+            'person1','person2','match_check'
+        ]
+
+class BlockProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = BlockProfile
+        fields=[
+            'user1', 'user2','block_check'
         ]
