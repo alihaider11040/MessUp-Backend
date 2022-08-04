@@ -1,90 +1,53 @@
 import email
-from rest_framework.decorators import api_view, permission_classes
+import math
+from operator import truediv
+from django.shortcuts import redirect, render
+from django.http import HttpResponse
+from django.shortcuts import get_object_or_404 #displays error if a aprticular user doesnt exist in the database
+from rest_framework.views import APIView # used so that views can return API data
+from rest_framework.response import Response # this gets our status or a response # returns 200 if everything good
+from rest_framework import status, permissions
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
-from rest_framework.response import Response
-from . import models , serializers
+from rest_framework.decorators import api_view, permission_classes
+from django.contrib.auth.models import User
+from django.contrib import messages
+from django.contrib.auth import authenticate, login
+from django.contrib.auth.decorators import login_required
 
+from datingApp.models import Profile, Profession, Zodiac, Login, Interests, SexualOrientation, Institute
+from datingApp.serializers import filterUsersSerializer
 
+#from . models import Profile, Profession, Zodiac, Login, Interests, SexualOrientation, Institute
+#from . serializers import filterUsersSerializer
 
-@api_view(['POST'])
-def addwithphone(request): #send phone number and OTP i.e token generated for authecation
-    data = request.data()
-    phoneNumber=data['phoneNumber']
-    alreadyExists = Login.objects.filter(phone_number=phoneNumber).exists()
-    if alreadyExists:
-        content = {'detail': 'user already exist!'}
-        return Response(content)
+# Create your views here.
+
+#request an API & get JSON back 
+# so a class-based view Cab be used to inherit data from API view
+# BUT we are using Function_based 
+@api_view(['GET'])  #GET method to return all users with respect to age and sexual orientation
+def filterUsers(request):  # we will get the age range from frontend # and sexual orientation from backend
+    obj_data = request.data
+
+    age_min = obj_data['age_min']
+    age_max = obj_data['age_max']
+    ID = obj_data['ID']
+
+    obj=get_object_or_404(Profile,id=ID)
+    # qs = Profile.objects.values_list('id', 'name') 
+    # sex=qs.s
+    Sexual_Orientation = Profile.objects.SexualOrientation(ID)
+    # if not running then make seperate serializer for sexual orientation
+    # print(Sexual_Orientation)
+    obj=get_object_or_404(Profile,id=ID) 
+
+    if SexualOrientation is 'all':
+        queryset = Profile.objects.filter(age__gte=age_min, age__lte=age_max)
     else:
-        serializer = Userbymobileserializer(data=request.data)
-        if serializer.is_valid():
-            obj= serializer.save()
-            return Response(obj, status=status.HTTP_201_CREATED)
+        queryset = Profile.objects.filter(age__gte=age_min, age__lte=age_max, SexualOrientation=Sexual_Orientation )
+        serializer= filterUsers(queryset, many=True) # serialize all the objects # take objects & convert to JSON # many= true means we have many objects so DONOT stop after 1 JSON obj
+        return Response(serializer.data) # return JSON response 
 
-
-@api_view(['POST'])
-def addwithgmail(request): #send email id for authentication
-    data = request.data()
-    email=data['email']
-    alreadyExists = Login.objects.filter(email=email).exists()
-    if alreadyExists:
-        content = {'detail': 'User Already Exist!'}
-        return Response(content)
-    else:
-        serializer = Userbymobileserializer(data=request.data)
-        if serializer.is_valid():
-            obj= serializer.save()
-            return Response(obj, status=status.HTTP_201_CREATED)
-
-@api_view(['POST'])
-def addwithfacebook(request): #send email id for authentication
-    data = request.data()
-    email=data['email']
-    alreadyExists = Login.objects.filter(email=email).exists()
-    if alreadyExists:
-        content = {'detail': 'user already exist!'}
-        return Response(content)
-    else:
-        serializer = Userbymobileserializer(data=request.data)
-        if serializer.is_valid():
-            obj= serializer.save()
-            return Response(obj, status=status.HTTP_201_CREATED)
-
-
-@api_view(['GET'])
-def getUser(request, pk):
-    profile = Profile.objects.get(id=pk)
-    serializer = ProfileSerializer(profile, many= False)
-    return Response(serializer.data)
-
-
-
-
-
-def SwipeRight(request):
-    data = request.data()
-    loggedInUserID=data['loggedInUserID']
-    #loggedInUserID=request.loggedInUserID
-    rightSwippedUserID=data['rightSwippedUserID']
-    #rightSwippedUserID=request.rightSwippedUserID
-    rightSwippedAlreadyExists = MatchMake.objects.filter(person1=rightSwippedUserID).exists()
-    leftSwippedAlreadyExists = MatchMake.objects.filter(person2=loggedInUserID).exists()
-    if rightSwippedAlreadyExists and leftSwippedAlreadyExists:
-        match = MatchMake.objects.get(person1= rightSwippedUserID, person2 = loggedInUserID)
-        match.person1 = loggedInUserID
-        match.person2 = rightSwippedUserID
-        match.match_check = True
-        match.save()        
-        Customuser = RegisterMatch(match, many=False)
-        return Response(match)
-    else:
-        match = MatchMake.objects.create(
-            person1=data['loggedInUserID'],
-            #person1=request.loggedInUserID,
-            person2=data['rightSwippedUserID'],
-            #person2=request.rightSwippedUserID,
-            match_check=False,
-        )
-        match.save()
-        return Response(match, status=HTTP_201_CREATED)
-
-
+# def getUsersWithinDistance(long_cord, lat_cord):
+#     users_list =[] 
+#     dist = math.sqrt((long_cord - x1)**2 + (lat_cord - y1)**2)

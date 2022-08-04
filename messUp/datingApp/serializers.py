@@ -5,7 +5,17 @@ from dataclasses import field
 from .models import Login, Profile, Institute, Profession, Interests, SexualOrientation
 from .models import Country, Zodiac, MatchMake
 
-#testmyfetch
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework.response import Response
+
+class filterUsersSerializer(serializers.ModelSerializer):
+    class Meta: 
+        model= Profile # model used = Profile
+        fields=[   # attributes required from Profile model is.
+            '__all__'
+        ]
+
 
 class Userbymobileserializer(serializers.ModelSerializer):
     class Meta:

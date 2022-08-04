@@ -9,6 +9,7 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 
 from datetime import timedelta
 from pathlib import Path
+from telnetlib import AUTHENTICATION
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -35,8 +36,22 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'datingApp.apps.DatingappConfig',
-    "rest_framework",
- 
+    'rest_framework',
+    'social_django',
+    # registering our app to intalled apps
+    #'datingApp',
+    # for registration
+    'django.contrib.sites',
+    'allauth',
+    'allauth.account',
+    #'rest_auth.registration',
+    # for installing rest_framework
+    #for rest-auth
+    #'rest_framework.authtoken',
+    'rest_auth',
+    # The following apps are required for allauth :
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
 ]
 
 MIDDLEWARE = [
@@ -47,9 +62,10 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'social_django.middleware.SocialAuthExceptionMiddleware',
 ]
 
-ROOT_URLCONF = 'messUp.urls'
+ROOT_URLCONF = 'datingApp.urls'
 
 TEMPLATES = [
     {
@@ -76,9 +92,9 @@ WSGI_APPLICATION = 'messUp.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'MessUp',
+        'NAME': 'MessUp_Database',
         'USER': 'postgres',
-        'PASSWORD': 'Ali08022022',
+        'PASSWORD': 'qwerty',
         'HOST': 'localhost',
         'PORT': '5432'
     }
@@ -127,3 +143,17 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# social apps custom settings
+AUTHENTICATION_BACKENDS = [
+    'social_core.backends.google.GoogleOAuth2',
+    'django.contrib.auth.backends.ModelBackend',
+]
+
+LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = 'home'
+LOGOUT_URL = 'logout'
+LOGOUT_REDIRECT_URL = 'login'
+
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '1015402732421-3bajrk651nhke0gb0tjvli99s7i3n4ns.apps.googleusercontent.com'
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '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'
