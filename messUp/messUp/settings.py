@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     # registering our app to intalled apps
     #'datingApp',
     # for registration
-    'django.contrib.sites',
+    #'django.contrib.sites',   # no need give error
     'allauth',
     'allauth.account',
     #'rest_auth.registration',
