@@ -7,6 +7,8 @@ from django.contrib.auth.models import User
 from datetime import date
 import uuid
 
+from django.forms import CharField
+
 class SexualOrientation(models.Model):
     choice = models.CharField(max_length=50, blank=False, null = False)
     created = models.DateTimeField(auto_now_add= True)
@@ -64,6 +66,10 @@ class Login(models.Model):
     def __str__(self):
         return str(self.email)
 
+class bodyType(models.Model):
+    bodyType = models.CharField(max_length=200, blank=True, null = True)
+    created = models.DateTimeField(auto_now_add= True)
+
 class Profile(models.Model):
     GENDER_CHOICES = (
         ('Male','Male'),
@@ -75,6 +81,8 @@ class Profile(models.Model):
     last_name = models.CharField(max_length=200, blank=True, null = True)
     city = models.CharField(max_length=200, blank = False, null = False)
     bio = models.TextField(blank = True, null= True)
+    height = models.IntegerField(blank=False, null=False)#considered it to be added in inches and calculate it in feet at the backend or take input in cms
+    bodyType = models.ForeignKey(bodyType, on_delete=models.CASCADE, blank=True, null = True)
     gender = models.CharField(max_length=200, choices= GENDER_CHOICES, null=True, blank=True)
     created = models.DateTimeField(auto_now_add= True)
     login = models.ForeignKey(Login, on_delete=models.CASCADE, null=True)
