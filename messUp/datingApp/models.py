@@ -10,7 +10,7 @@ import uuid
 from django.forms import CharField
 
 class SexualOrientation(models.Model):
-    choice = models.CharField(max_length=50, blank=False, null = False)
+    choice = models.CharField(max_length=50, blank=True, null = True)
     created = models.DateTimeField(auto_now_add= True)
 
     def __str__(self):
@@ -18,20 +18,20 @@ class SexualOrientation(models.Model):
 
 
 class Country(models.Model):
-    country_name = models.CharField(max_length=200, blank=False, null = False)
+    country_name = models.CharField(max_length=200, blank=True, null = True)
     created = models.DateTimeField(auto_now_add= True)
     def __str__(self):
         return str(self.country_name)
 
 class Profession(models.Model):
-    profession_name = models.CharField(max_length=200, blank=False, null = False)
+    profession_name = models.CharField(max_length=200, blank=True, null = True)
     created = models.DateTimeField(auto_now_add= True)
    
     def __str__(self):
         return str(self.profession_name)
 
 class Institute(models.Model):
-    institution_name = models.CharField(max_length=200, blank=False, null = False)
+    institution_name = models.CharField(max_length=200, blank=True, null = True)
     created = models.DateTimeField(auto_now_add= True)
    
     def __str__(self):
@@ -59,7 +59,7 @@ class Zodiac(models.Model):
 
 class Login(models.Model):
     phone_number = models.CharField(max_length=11, null = True, blank=True)
-    token = models.CharField(max_length=100, null=False, blank=False)
+    token = models.CharField(max_length=100, null=True, blank=True)
     created = models.DateTimeField(auto_now_add= True)
     email= models.EmailField(max_length=200, blank = True, null = True)
     
@@ -79,9 +79,9 @@ class Profile(models.Model):
     username= models.CharField(max_length=200, blank=True, null = True)
     first_name = models.CharField(max_length=200, blank=True, null = True)
     last_name = models.CharField(max_length=200, blank=True, null = True)
-    city = models.CharField(max_length=200, blank = False, null = False)
+    city = models.CharField(max_length=200, blank = True, null = True)
     bio = models.TextField(blank = True, null= True)
-    height = models.IntegerField(blank=False, null=False)#considered it to be added in inches and calculate it in feet at the backend or take input in cms
+    height = models.IntegerField(blank=True, null=True)#considered it to be added in inches and calculate it in feet at the backend or take input in cms
     bodyType = models.ForeignKey(bodyType, on_delete=models.CASCADE, blank=True, null = True)
     gender = models.CharField(max_length=200, choices= GENDER_CHOICES, null=True, blank=True)
     created = models.DateTimeField(auto_now_add= True)
@@ -102,8 +102,8 @@ class Profile(models.Model):
 class PictureGallery(models.Model):
     created = models.DateTimeField(auto_now_add= True)
     user = models.ForeignKey(Profile, on_delete=models.CASCADE, null = True)
-    profile_image = models.ImageField(null=False, blank = False, upload_to='profiles/', default = "user-default.png")
-    image1 = models.ImageField(null=False,blank=False, upload_to='profiles/', default = "user-default.png")
+    profile_image = models.ImageField(null=True, blank = True, upload_to='profiles/', default = "user-default.png")
+    image1 = models.ImageField(null=True,blank=True, upload_to='profiles/', default = "user-default.png")
     image2 = models.ImageField(null=True,blank=True, upload_to='profiles/', default = "user-default.png")
     image3 = models.ImageField(null=True,blank=True, upload_to='profiles/', default = "user-default.png")
     image4 = models.ImageField(null=True,blank=True, upload_to='profiles/', default = "user-default.png")
@@ -113,7 +113,7 @@ class PictureGallery(models.Model):
         return str(self.user.username)
 
 class Interests(models.Model):
-    interestsChoice = models.CharField(max_length=100, blank=False, null = False)
+    interestsChoice = models.CharField(max_length=100, blank=True, null = True)
     created = models.DateTimeField(auto_now_add= True)
 
     def __str__(self):
@@ -140,7 +140,7 @@ class BlockProfile(models.Model):
 
 class Notifications(models.Model):
     user = models.ForeignKey(Profile,  blank= True, null=True,on_delete=models.CASCADE),
-    notification_message = models.CharField(max_length=500, null=False, blank=False)
+    notification_message = models.CharField(max_length=500, null=True, blank=True)
     created = models.DateTimeField(auto_now_add= True)
 
     def __str__(self):
