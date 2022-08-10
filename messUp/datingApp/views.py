@@ -173,8 +173,7 @@ def UserSignUpView(request):
     age=data['age']
     date_of_birth=data['date_of_birth']
     gender=data['gender']
-    id=1
-    alreadyExists = Profile.objects.filter(id=id).exists()
+    alreadyExists = Profile.objects.filter(username=username).exists()
     if alreadyExists:
         message="already exist"
         return Response(message)
