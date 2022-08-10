@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Institute, Profile, Country, Profession, SexualOrientation, Zodiac,Interests,MatchMake,Login,BlockProfile, PictureGallery,InterestsID
+from .models import Institute, Profile, Country, Profession, SexualOrientation, Zodiac,Interests,MatchMake,Login,BlockProfile, PictureGallery,InterestsID, bodyType
 #Register your models here.
 
 admin.site.register(Profile)
@@ -14,3 +14,4 @@ admin.site.register(Login)
 admin.site.register(BlockProfile)
 admin.site.register(PictureGallery)
 admin.site.register(InterestsID)
+admin.site.register(bodyType)

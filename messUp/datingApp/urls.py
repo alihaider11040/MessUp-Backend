@@ -27,7 +27,7 @@ urlpatterns = [
     #path('suggest-matches/',views.suggestmatches),
     path('getUser/<str:pk>/',views.getUser),
     #path('signup/', views.signup),
-
+    path('filterUsers/',views.filterUsers),
     path('right-swipe/',views.SwipeRight),
     path('down-swipe/',views.SwipeDown), 
     path('unblock/',views.Unblock),

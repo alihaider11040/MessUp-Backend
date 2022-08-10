@@ -1,13 +1,12 @@
 
 import email
 import math
-import geopy.distance
-import requests
+#import geopy.distance
 from datingApp.serializers import*
 from datingApp.models import*
 from operator import truediv
 
-from geopy.distance import geodesic as GD
+#from geopy.distance import geodesic as GD
 
 from django.shortcuts import redirect, render
 from django.http import HttpResponse
@@ -173,8 +172,7 @@ def UserSignUpView(request):
     age=data['age']
     date_of_birth=data['date_of_birth']
     gender=data['gender']
-    id=1
-    alreadyExists = Profile.objects.filter(id=id).exists()
+    alreadyExists = Profile.objects.filter(username=username).exists()
     if alreadyExists:
         message="already exist"
         return Response(message)
@@ -316,9 +314,20 @@ def filterUsers(request):  # we will get the age range from frontend # and sexua
 
     qs = Profile.objects.get(id=ID)
     print(qs)
+    
     qs=qs.sexualOrientation
     print(qs)
 
+    interests = InterestsID.objects.filter(user_id=ID)
+    interestsCount = InterestsID.objects.filter(user_id=ID).count()
+    
+    print(interests) 
+    
+    i= 0
+    while i < interestsCount:
+        sameInterests = InterestsID.objects.filter(interest_id = interests[i].interest_id).exclude(user_id=ID)
+        print(sameInterests)
+        i = i+1    
     '''Get users within dist_range of longitude & Latitude'''
     dlat = Radians(F('latitude') - current_lat)
     dlong = Radians(F('longitude') - current_long)
@@ -327,6 +336,7 @@ def filterUsers(request):  # we will get the age range from frontend # and sexua
     )
     c = 2 * ATan2(Sqrt(a), Sqrt(1-a))
     d = 6371 * c
+ 
     LocationsNearMe = Profile.objects.annotate(distance=d).order_by('distance').filter(distance__lt=dist_range)
     '''filter on sexualOrientation+ageLimit+distance'''
     if qs is 'all':
@@ -334,6 +344,7 @@ def filterUsers(request):  # we will get the age range from frontend # and sexua
         print("all")
     else:
         queryset = Profile.objects.filter(age__gte=age_min, age__lte=age_max,sexualOrientation__choice=qs, id__in=LocationsNearMe ).exclude(id=ID)
+        #print(queryset[0].username)
         print("not all")
     serializer= filterUsersSerializer(queryset, many=True) # serialize all the objects # take objects & convert to JSON # many= true means we have many objects so DONOT stop after 1 JSON obj
     return Response(serializer.data) # return JSON response 
@@ -357,62 +368,62 @@ def filterUsers(request):  # we will get the age range from frontend # and sexua
 
 
 
-def SwipeRight(request):
-    data = request.data()
-    loggedInUserID=data['loggedInUserID']
-    #loggedInUserID=request.loggedInUserID
-    rightSwipedUserID=data['rightSwipedUserID']
-    #rightSwippedUserID=request.rightSwippedUserID
-    rightSwipedAlreadyExists = MatchMake.objects.filter(person1=rightSwipedUserID).exists()
-    leftSwipedAlreadyExists = MatchMake.objects.filter(person2=loggedInUserID).exists()
-    if rightSwipedAlreadyExists and leftSwipedAlreadyExists:
-        match = MatchMake.objects.get(person1= rightSwipedUserID, person2 = loggedInUserID)
-        match.person1 = loggedInUserID
-        match.person2 = rightSwipedUserID
-        match.match_check = True
-        match.save()
-        content = {'detail': 'Its a match'}        
-        matchMade = RegisterMatch(match, many=False)
-        return Response(matchMade.data, content)
-    else:
-        match = MatchMake.objects.create(
-            person1=data['loggedInUserID'],
-            #person1=request.loggedInUserID,
-            person2=data['rightSwipedUserID'],
-            #person2=request.rightSwippedUserID,
-            match_check=False,
-        )
-        match.save()
-        oneSidedLike = RegisterMatch(match, many=False)
-        return Response(oneSidedLike.data, status=HTTP_201_CREATED)
+# def SwipeRight(request):
+#     data = request.data()
+#     loggedInUserID=data['loggedInUserID']
+#     #loggedInUserID=request.loggedInUserID
+#     rightSwipedUserID=data['rightSwipedUserID']
+#     #rightSwippedUserID=request.rightSwippedUserID
+#     rightSwipedAlreadyExists = MatchMake.objects.filter(person1=rightSwipedUserID).exists()
+#     leftSwipedAlreadyExists = MatchMake.objects.filter(person2=loggedInUserID).exists()
+#     if rightSwipedAlreadyExists and leftSwipedAlreadyExists:
+#         match = MatchMake.objects.get(person1= rightSwipedUserID, person2 = loggedInUserID)
+#         match.person1 = loggedInUserID
+#         match.person2 = rightSwipedUserID
+#         match.match_check = True
+#         match.save()
+#         content = {'detail': 'Its a match'}        
+#         matchMade = RegisterMatch(match, many=False)
+#         return Response(matchMade.data, content)
+#     else:
+#         match = MatchMake.objects.create(
+#             person1=data['loggedInUserID'],
+#             #person1=request.loggedInUserID,
+#             person2=data['rightSwipedUserID'],
+#             #person2=request.rightSwippedUserID,
+#             match_check=False,
+#         )
+#         match.save()
+#         oneSidedLike = RegisterMatch(match, many=False)
+#         return Response(oneSidedLike.data, status=HTTP_201_CREATED)
 
 
 
 
-@api_view(['POST'])
-def SwipeDown(request):
-    data=request.data()
-    loggedInUserID=data['loggedInUserID']
-    DownSwippedUserID=data['downSwippedUserID']
+# @api_view(['POST'])
+# def SwipeDown(request):
+#     data=request.data()
+#     loggedInUserID=data['loggedInUserID']
+#     DownSwippedUserID=data['downSwippedUserID']
 
-    DownSwippedAlreadyExists = MatchMake.objects.filter(user1=DownSwippedUserID).exists()
-    loggedInAlreadyExists = MatchMake.objects.filter(user2=loggedInUserID).exists()
+#     DownSwippedAlreadyExists = MatchMake.objects.filter(user1=DownSwippedUserID).exists()
+#     loggedInAlreadyExists = MatchMake.objects.filter(user2=loggedInUserID).exists()
 
 
-    DownSwippedAlreadyExists2 = MatchMake.objects.filter(user2=DownSwippedUserID).exists()
-    loggedInAlreadyExists2 = MatchMake.objects.filter(user1=loggedInUserID).exists()
+#     DownSwippedAlreadyExists2 = MatchMake.objects.filter(user2=DownSwippedUserID).exists()
+#     loggedInAlreadyExists2 = MatchMake.objects.filter(user1=loggedInUserID).exists()
     
-    if (DownSwippedAlreadyExists and loggedInAlreadyExists) or (DownSwippedAlreadyExists2 and loggedInAlreadyExists2):
-        content = {'message': 'Already Blocked'}
-        return Response(content)
-    else:
-        block = BlockProfile.objects.create(
-            user1=data['loggedInUserID'],
-            #person1=request.loggedInUserID,
-            user2=data['rightSwippedUserID'],
-            #person2=request.rightSwippedUserID,
-            block_check=True,
-        )
-        block.save()
-        BlockProfileMade = BlockProfileSerializer(block, many=False)
-        return Response(BlockProfileMade, status=HTTP_201_CREATED)
+#     if (DownSwippedAlreadyExists and loggedInAlreadyExists) or (DownSwippedAlreadyExists2 and loggedInAlreadyExists2):
+#         content = {'message': 'Already Blocked'}
+#         return Response(content)
+#     else:
+#         block = BlockProfile.objects.create(
+#             user1=data['loggedInUserID'],
+#             #person1=request.loggedInUserID,
+#             user2=data['rightSwippedUserID'],
+#             #person2=request.rightSwippedUserID,
+#             block_check=True,
+#         )
+#         block.save()
+#         BlockProfileMade = BlockProfileSerializer(block, many=False)
+#         return Response(BlockProfileMade, status=HTTP_201_CREATED)

@@ -39,7 +39,7 @@ class Institute(models.Model):
 class Zodiac(models.Model):
     ZODIAC_CHOICES=(
         ('Capricon','Capricon'),
-        ('Aquarius','Aquarius'),
+        ('Aquarius','Aquarius'), 
         ('Pisces','Pisces'),
         ('Aries','Aries'),
         ('Taurus','Taurus'),
@@ -70,6 +70,8 @@ class bodyType(models.Model):
     bodyType = models.CharField(max_length=200, blank=True, null = True)
     created = models.DateTimeField(auto_now_add= True)
 
+    def __str__(self):
+        return str(self.bodyType)
 class Profile(models.Model):
     GENDER_CHOICES = (
         ('Male','Male'),

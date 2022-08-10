@@ -1,0 +1,4 @@
+I have to implement interests suggestions in views.py
+
+I have to get the logged in User id. then filter the users from database or we are getting from above to 
+those whose two interests match

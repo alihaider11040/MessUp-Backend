@@ -202,3 +202,10 @@ class BlockProfileSerializer(serializers.ModelSerializer):
         fields=[
             'user1', 'user2','block_check'
         ]
+#copied from Ayila's BRANCH
+class filterUsersSerializer(serializers.ModelSerializer):
+    class Meta: 
+        model= Profile # model used = Profile
+        fields=[   # attributes required from Profile model is.
+            '__all__'
+        ] 
