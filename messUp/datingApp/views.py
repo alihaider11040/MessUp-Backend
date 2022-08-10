@@ -89,7 +89,7 @@ def addwithfacebook(request): #send email id for authentication
 def getUser(request, pk):
     profile = Profile.objects.filter(id=pk).exists()
     if profile:
-        serializer = ProfileSerializer(Profile.objects.GET(id=pk), many= False)
+        serializer = ProfileSerializer(Profile.objects.get(id=pk), many= False)
         return Response(serializer.data)
     else:
         content = {'details': 'No User exists'}
@@ -321,13 +321,40 @@ def filterUsers(request):  # we will get the age range from frontend # and sexua
     interests = InterestsID.objects.filter(user_id=ID)
     interestsCount = InterestsID.objects.filter(user_id=ID).count()
     
-    print(interests) 
-    
+    # print(interests) 
+    sameInterestsUsers = list()
     i= 0
     while i < interestsCount:
         sameInterests = InterestsID.objects.filter(interest_id = interests[i].interest_id).exclude(user_id=ID)
-        print(sameInterests)
-        i = i+1    
+        sameInterestsCount = InterestsID.objects.filter(interest_id = interests[i].interest_id).exclude(user_id=ID).count()
+        j = 0
+        while j < sameInterestsCount:
+            sameInterestsUsers.append(sameInterests[j].user_id)
+            j = j+1
+        i = i+1
+
+    countCheck= 0 
+    doneCheckingUsers = list()
+    matchedInterestUsers = list()
+    x= 0
+    for x in range(len(sameInterestsUsers)):
+        y = 0
+        if sameInterestsUsers[x] in doneCheckingUsers:
+            pass
+        else:
+            for y in range(len(sameInterestsUsers)):
+                if sameInterestsUsers[y] == sameInterestsUsers[x]:
+                    countCheck += 1
+            doneCheckingUsers.append(sameInterestsUsers[x])
+            if countCheck >= 2:
+                matchedInterestUsers.append(sameInterestsUsers[x])
+            countCheck = 0
+  
+
+    ids = Profile.objects.filter(id__in = matchedInterestUsers)
+    
+    print(ids[0].username)
+    #print(Profile.objects.filter().exclude(id__in=matchedInterestUsers).query)
     '''Get users within dist_range of longitude & Latitude'''
     dlat = Radians(F('latitude') - current_lat)
     dlong = Radians(F('longitude') - current_long)

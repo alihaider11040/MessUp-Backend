@@ -161,7 +161,7 @@ class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model=Profile
         fields=[
- 'username','first_name','last_name','city','bio','gender','login','sexualOrientation','country' ,'profession' ,'institute','age','date_of_birth','zodiac'
+ 'username','first_name','last_name','city','bio','gender','login','sexualOrientation','country' ,'profession' ,'institute','age','date_of_birth','zodiac','longitude','latitude'
 
         ]
 
