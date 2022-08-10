@@ -70,11 +70,9 @@ def SwipeRight(request):
     rightSwipedUserID=data['person2']
     rightSwipedAlreadyExists = MatchMake.objects.filter(person1=rightSwipedUserID).exists()
     leftSwipedAlreadyExists = MatchMake.objects.filter(person2=loggedInUserID).exists()
-    rightSwipedAlreadyExists2 = MatchMake.objects.filter(person2=rightSwipedUserID).exists()
-    leftSwipedAlreadyExists2 = MatchMake.objects.filter(person1=loggedInUserID).exists()
      
-    if (rightSwipedAlreadyExists and leftSwipedAlreadyExists) or (rightSwipedAlreadyExists2 and leftSwipedAlreadyExists2):
-        match = MatchMake.objects.get(person1=data['person1'], person2 = data['person2'])
+    if (rightSwipedAlreadyExists and leftSwipedAlreadyExists):
+        match = MatchMake.objects.get(person1=data['person2'], person2 = data['person1'])
         match.match_check = True
         match.save()     
         matchMade = RegisterMatch(match, many=False)
