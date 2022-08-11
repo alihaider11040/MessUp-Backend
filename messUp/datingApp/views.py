@@ -55,9 +55,13 @@ def filterUsers(request):  # we will get the age range from frontend # and sexua
     * Cos(Radians(F('latitude'))) * Power(Sin(dlong/2), 2)
     )
     c = 2 * ATan2(Sqrt(a), Sqrt(1-a))
-    d = 6371 * c
+    print(c)
+    d = 6371 * c 
+    print(d)
     LocationsNearMe = Profile.objects.annotate(distance=d).order_by('distance').filter(distance__lt=dist_range)
-    '''filter on sexualOrientation+ageLimit+distance'''
+    print(LocationsNearMe)
+    
+    '''filter on sexualOrientation+ ageLimit+ distance'''
     if qs is 'all':
         queryset = Profile.objects.filter(age__gte=age_min, age__lte=age_max,id__in=LocationsNearMe).exclude(id=ID)
         print("all")
