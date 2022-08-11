@@ -153,7 +153,7 @@ class BlockProfile(models.Model):
         return str(self.user1.username + " "+ self.user2.username)
 
 class Notifications(models.Model):
-    user = models.ForeignKey(Profile,  blank= True, null=True,on_delete=models.CASCADE),
+    user = models.ForeignKey(Profile,blank= True, null=True,on_delete=models.CASCADE)
     notification_message = models.CharField(max_length=500, null=True, blank=True)
     created = models.DateTimeField(auto_now_add= True)
 

@@ -3,7 +3,7 @@ from . import models
 from rest_framework.validators import UniqueValidator
 from dataclasses import field
 from .models import Login, Profile, Institute, Profession, Interests, SexualOrientation
-from .models import Country, Zodiac, MatchMake, BlockProfile
+from .models import Country, Zodiac, MatchMake, BlockProfile, Notifications
 
 #testmyfetch
 
@@ -209,3 +209,16 @@ class filterUsersSerializer(serializers.ModelSerializer):
         fields=[   # attributes required from Profile model is.
             '__all__'
         ] 
+
+class notificationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Notifications
+        fields = [
+            'notification_message', 'id'
+        ]
+class addNotificationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Notifications
+        fields = [
+            'notification_message', 'user'
+        ]

@@ -92,6 +92,29 @@ def getUser(request, pk):
         content = {'details': 'No User exists'}
         return Response(content)
 
+@api_view(['GET'])
+def getNotifications(request):
+    data = request.data
+    id = data['id']
+    notifications = Notifications.objects.filter(user=id)
+    if notifications:
+        serializer = notificationSerializer(notifications, many= True)
+        return Response(serializer.data)
+    else:
+        content = {'details': 'No Notifications Exists for this user'}
+        return Response(content)
+
+
+@api_view(['POST'])
+def addNotifications(request):
+    data = request.data
+    notificationAdded = addNotificationSerializer(data=request.data)
+    if notificationAdded.is_valid():
+        notificationAdded.save()
+        return Response(notificationAdded.data, status=status.HTTP_201_CREATED)
+    else:
+        content = {'details': 'Serializer Not Valid'}
+        return Response(content)
 
 #-----not on server-------------------------#
 

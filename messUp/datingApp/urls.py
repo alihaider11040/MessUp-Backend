@@ -31,4 +31,6 @@ urlpatterns = [
     path('right-swipe/',views.SwipeRight),
     path('down-swipe/',views.SwipeDown), 
     path('unblock/',views.Unblock),
+    path('notifications/',views.getNotifications),
+    path('postNotifications/',views.addNotifications),
 ]
