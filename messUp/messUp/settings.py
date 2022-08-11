@@ -10,6 +10,7 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 from datetime import timedelta
 from pathlib import Path
 from telnetlib import AUTHENTICATION
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -91,13 +92,16 @@ WSGI_APPLICATION = 'messUp.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'DataBase',
-        'USER': 'postgres',
-        'PASSWORD': 'qwerty',
-        'HOST': 'localhost',
-        'PORT': '5432'
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME':os.path.join(BASE_DIR, 'db.sqlite3')
+        #  BASE_DIR / 'db.sqlite3',
     }
+        # 'NAME': 'DataBase',
+        # 'USER': 'postgres',
+        # 'PASSWORD': 'qwerty',
+        # 'HOST': 'localhost',
+        # 'PORT': '5432'
+    
 }
 
 

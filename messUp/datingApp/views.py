@@ -1,7 +1,7 @@
 from __future__ import print_function
 #from geopy.distance import geodesic as GD
-import geopy.distance
-from django.db.models.functions import Radians, Power, Sin, Cos, ATan2, Sqrt, Radians
+#import geopy.distance
+from django.db.models.functions import Radians, Power, Sin, Cos, ATan2, Sqrt
 from django.db.models import F
 import email
 import math
@@ -21,6 +21,8 @@ from django.contrib.auth.decorators import login_required
 
 from datingApp.models import Profile, Profession, Zodiac, Login, Interests, SexualOrientation, Institute
 from datingApp.serializers import filterUsersSerializer
+from datingApp.models import InterestsID
+from datingApp.serializers import InterestsSerializer
 
 #from . models import Profile, Profession, Zodiac, Login, Interests, SexualOrientation, Institute
 #from . serializers import filterUsersSerializer
@@ -47,26 +49,99 @@ def filterUsers(request):  # we will get the age range from frontend # and sexua
     print(qs)
     qs=qs.sexualOrientation
     print(qs)
+    '''------------------------------------------------------------------------'''
+    '''Filter on location based'''
+    profiles = Profile.objects.filter().exclude(id=ID)
+    profilesCount = Profile.objects.filter().exclude(id=ID).count()
+    #print("count:",profilesCount)
 
-    '''Get users within dist_range of longitude & Latitude'''
-    dlat = Radians(F('latitude') - current_lat)
-    dlong = Radians(F('longitude') - current_long)
-    a = (Power(Sin(dlat/2), 2) + Cos(Radians(current_lat)) 
-    * Cos(Radians(F('latitude'))) * Power(Sin(dlong/2), 2)
-    )
-    c = 2 * ATan2(Sqrt(a), Sqrt(1-a))
-    print(c)
-    d = 6371 * c 
-    print(d)
-    LocationsNearMe = Profile.objects.annotate(distance=d).order_by('distance').filter(distance__lt=dist_range)
-    print(LocationsNearMe)
+    i = 0
+    dist_in_km =list()
+    idsList = list()
+    lats = list()
+    longs = list()
+    while i<profilesCount:
+        profiles[i].longitude
+        profiles[i].latitude
+
+        '''Get users within dist_range of longitude & Latitude'''
+        
+        dlat = math.radians((profiles[i].latitude) - current_lat)
+        dlong = math.radians((profiles[i].longitude) - current_long)
+        
+        a = (pow(math.sin(dlat/2), 2) + math.cos(math.radians(current_lat)) 
+        * math.cos(math.radians(profiles[i].latitude)) * pow(math.sin(dlong/2), 2)
+        )
+
+        c = 2 * math.atan2(math.sqrt(a), math.sqrt(1-a))        
+        d = 6371 * c  # 6371 is rdaius of earth in kilometers
+
+        if d<= float(dist_range):
+            dist_in_km.append(d)
+            idsList.append(profiles[i].id)
+
+        print("dist_in_km: ",dist_in_km)
+        #order_by('distance')
+        #.annotate(id__in=idsList.order_by('distance').
+        LocationsNearMe = Profile.objects.filter(id__in=idsList)
+        #print("LocationsNearMe:", LocationsNearMe)
+
+        i =i+1
+    print("LocationsNearMe:", LocationsNearMe)
+    '''------------------------------------------------------------------------'''
+    '''Filter Profiles based on their Interests Matched (match if atleast 2 interests are same )'''
+    interests = InterestsID.objects.filter(user_id=ID)
+    interestsCount = InterestsID.objects.filter(user_id=ID).count()
     
-    '''filter on sexualOrientation+ ageLimit+ distance'''
-    if qs is 'all':
-        queryset = Profile.objects.filter(age__gte=age_min, age__lte=age_max,id__in=LocationsNearMe).exclude(id=ID)
+    sameInterestsUsers = list()
+    i= 0
+    while i < interestsCount:
+        sameInterests = InterestsID.objects.filter(interest_id = interests[i].interest_id).exclude(user_id=ID)
+        sameInterestsCount = InterestsID.objects.filter(interest_id = interests[i].interest_id).exclude(user_id=ID).count()
+        j = 0
+        while j < sameInterestsCount:
+            sameInterestsUsers.append(sameInterests[j].user_id)
+            j = j+1
+        i = i+1
+
+    countCheck= 0 
+    doneCheckingUsers = list()
+    matchedInterestUsers = list()
+    x= 0
+    for x in range(len(sameInterestsUsers)):
+        y = 0
+        if sameInterestsUsers[x] in doneCheckingUsers:
+            pass
+        else:
+            for y in range(len(sameInterestsUsers)):
+                if sameInterestsUsers[y] == sameInterestsUsers[x]:
+                    countCheck += 1
+            doneCheckingUsers.append(sameInterestsUsers[x])
+            if countCheck >= 2:
+                matchedInterestUsers.append(sameInterestsUsers[x])
+            countCheck = 0
+  
+
+    ids = Profile.objects.filter(id__in = matchedInterestUsers)
+
+    print("ids:", ids)
+
+    '''------------------------------------------------------------------------'''
+
+    '''Combine Filter on ageLimit+ sexualOrientation+ distance + interests_matched'''
+
+    if qs == 'all':
+        queryset = Profile.objects.filter(age__gte=age_min, age__lte=age_max,id__in=idsList).filter (id__in= ids).exclude(id=ID)
+        print("queryset:",queryset)
         print("all")
     else:
-        queryset = Profile.objects.filter(age__gte=age_min, age__lte=age_max,sexualOrientation__choice=qs, id__in=LocationsNearMe ).exclude(id=ID)
+        '''commented part can be used later for back tracking user Profiles when Profiles r exhausted'''
+        # queryset1=Profile.objects.filter(age__gte=age_min, age__lte=age_max).exclude(id=ID)
+        # queryset2=Profile.objects.filter(sexualOrientation__choice=qs).exclude(id=ID)
+        # print(queryset1)
+        # print(queryset2)
+        queryset = Profile.objects.filter(age__gte=age_min, age__lte=age_max,sexualOrientation__choice=qs, id__in=idsList).filter ( id__in= ids).exclude(id=ID)
+        print(queryset)
         print("not all")
     serializer= filterUsersSerializer(queryset, many=True) # serialize all the objects # take objects & convert to JSON # many= true means we have many objects so DONOT stop after 1 JSON obj
     return Response(serializer.data) # return JSON response 
