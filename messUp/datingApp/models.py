@@ -51,7 +51,7 @@ class Zodiac(models.Model):
         ('Scorpio','Scorpio'),
         ('Sagittarius','Sagittarius'),
     )
-    zodiac =  models.CharField(max_length=100, choices=ZODIAC_CHOICES)
+    zodiac =  models.CharField(max_length=100, choices=ZODIAC_CHOICES, unique=True)
   
     created = models.DateTimeField(auto_now_add= True)
     def __str__(self):
@@ -78,7 +78,7 @@ class Profile(models.Model):
         ('Female','Female'),
         ('Other','Other'),
     )
-    username= models.CharField(max_length=200, blank=True, null = True)
+    username= models.CharField(max_length=200, blank=True, null = True, unique = True)
     first_name = models.CharField(max_length=200, blank=True, null = True)
     last_name = models.CharField(max_length=200, blank=True, null = True)
     city = models.CharField(max_length=200, blank = True, null = True)

@@ -1,4 +1,5 @@
 
+from bisect import bisect_right
 import email
 import math
 #import geopy.distance
@@ -21,7 +22,7 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 
-
+from datetime import date
 
 
 from rest_framework.status import HTTP_201_CREATED
@@ -163,15 +164,51 @@ def Unblock(request):
 @api_view(['POST'])
 def UserSignUpView(request):
     data=request.data
-    zodiac=data['zodiac']
     username=data['username']
+    usernameCheck = Profile.objects.filter(username = username).exists()
+    if usernameCheck:
+        context = {'message': 'username already exists'}
+        return Response(context)
     first_name=data['first_name']
     last_name=data['last_name']
     bio=data['bio']
     city=data['city']
-    age=data['age']
     date_of_birth=data['date_of_birth']
     gender=data['gender']
+    today = date.today()
+    todayMonth = int(today.month)
+    todayYear = int(today.year)
+    birthYear = int(date_of_birth[:4])
+    todayDay = int(today.day)
+    birthMonth = int(date_of_birth[5:7])
+    birthDay = int(date_of_birth[8:10])   
+    age=todayYear - birthYear - ((todayMonth, todayDay) < (birthMonth, birthDay))
+    
+    if birthMonth == 12:
+        zodiac = 'Sagittarius' if (birthDay < 22) else 'capricorn'
+    elif birthMonth == 1:
+        zodiac = 'Capricorn' if (birthDay < 20) else 'Aquarius'
+    elif birthMonth == 2:
+        zodiac = 'Aquarius' if (birthDay < 19) else 'Pisces'
+    elif birthMonth == 3:
+        zodiac = 'Pisces' if (birthDay < 21) else 'Aries'
+    elif birthMonth == 4:
+        zodiac = 'Aries' if (birthDay < 20) else 'Taurus'
+    elif birthMonth == 5:
+        zodiac = 'Taurus' if (birthDay < 21) else 'Gemini'
+    elif birthMonth == 6:
+        zodiac = 'Gemini' if (birthDay < 21) else 'Cancer'
+    elif birthMonth == 7:
+        zodiac = 'Cancer' if (birthDay < 23) else 'Leo'
+    elif birthMonth == 8:
+        zodiac = 'Leo' if (birthDay < 23) else 'Virgo'
+    elif birthMonth == 9:
+        zodiac = 'Virgo' if (birthDay < 23) else 'Libra'
+    elif birthMonth == 10:
+        zodiac = 'Libra' if (birthDay < 23) else 'Scorpio'
+    elif birthMonth == 11:
+        zodiac = 'Scorpio' if (birthDay < 22) else 'Sagittarius'
+
     professionCheck = Profession.objects.filter(profession_name = data['profession_name']).first()
     if professionCheck is None:
         serializer=AddProfessionSerializer(data=request.data)
@@ -199,7 +236,7 @@ def UserSignUpView(request):
 
     login_obj = Login.objects.filter(id = data['loginID']).first()
 
-    zodiac_obj = Zodiac.objects.filter(zodiac = data['zodiac']).first()
+    zodiac_obj = Zodiac.objects.filter(zodiac = zodiac).first()
 
 
     Profile.objects.create(
