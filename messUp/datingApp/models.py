@@ -87,7 +87,7 @@ class Profile(models.Model):
     bodyType = models.ForeignKey(bodyType, on_delete=models.CASCADE, blank=True, null = True)
     gender = models.CharField(max_length=200, choices= GENDER_CHOICES, null=True, blank=True)
     created = models.DateTimeField(auto_now_add= True)
-    login = models.ForeignKey(Login, on_delete=models.CASCADE, null=True)
+    login = models.OneToOneField(Login, on_delete=models.CASCADE, null=True)
     sexualOrientation = models.ForeignKey(SexualOrientation,on_delete=models.CASCADE)
     country = models.ForeignKey(Country, on_delete=models.CASCADE)
     profession = models.ForeignKey(Profession,on_delete=models.CASCADE)
@@ -103,7 +103,7 @@ class Profile(models.Model):
 
 class PictureGallery(models.Model):
     created = models.DateTimeField(auto_now_add= True)
-    user = models.ForeignKey(Profile, on_delete=models.CASCADE, null = True)
+    user = models.OneToOneField(Profile, on_delete=models.CASCADE, null = True)
     profile_image = models.ImageField(null=True, blank = True, upload_to='profiles/', default = "user-default.png")
     image1 = models.ImageField(null=True,blank=True, upload_to='profiles/', default = "user-default.png")
     image2 = models.ImageField(null=True,blank=True, upload_to='profiles/', default = "user-default.png")

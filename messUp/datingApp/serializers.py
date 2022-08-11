@@ -134,7 +134,7 @@ class LoginSerializer(serializers.ModelSerializer):
 class AddLoginSerializer(serializers.Serializer):
     class Meta:
         model=Login
-        fields=['phone_number','token','email']
+        fields=['id','phone_number','token','email']
 
     def create(self,validated_data):
         return Login.objects.create(**validated_data)

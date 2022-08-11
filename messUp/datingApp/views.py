@@ -172,93 +172,53 @@ def UserSignUpView(request):
     age=data['age']
     date_of_birth=data['date_of_birth']
     gender=data['gender']
-    alreadyExists = Profile.objects.filter(username=username).exists()
-    if alreadyExists:
-        message="already exist"
-        return Response(message)
-
-    else:
-        # Login.objects.create(
-        #     phone_number=phone_number,
-        #     token=token
-        # )
-        # Profession.objects.create(
-        #     profession_name=profession_name
-        # )
-        # Institute.objects.create(
-        #     institution_name=institution_name
-        # )
-        # SexualOrientation.objects.create(
-        #     choice=choice
-        # )
-        # Country.objects.create(
-        #     country_name=country_name
-        # )
-        # Zodiac.objects.create(
-        #     zodiac=zodiac
-        # )
-        
-        # Profile.objects.create(
-        #  username=username,
-        #  first_name=first_name, 
-        #  last_name=last_name, 
-        #  city=city, 
-        #  bio=bio,
-        #  age=age,
-        #  date_of_birth=date_of_birth,
-        #  gender=gender,
-        #  login=login,
-        #  sexualOrientation=sexualOrientation,
-        #  country=country,
-        #  profession=profession,
-        #  institute=institute,
-        #  zodiac=zodiac
-        # )
+    professionCheck = Profession.objects.filter(profession_name = data['profession_name']).first()
+    if professionCheck is None:
         serializer=AddProfessionSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
-            profession=serializer.save()
+            professionCheck=serializer.save()
+
+
+    instituteCheck = Institute.objects.filter(institution_name = data['institution_name']).first()
+    if instituteCheck is None:
         serializer=AddInstituteSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
-           institute=serializer.save()
-        serializer=AddZodiacSerializer(data=request.data)
-        if serializer.is_valid(raise_exception=True):
-            zodiac=serializer.save()
+           instituteCheck=serializer.save()
+
+    sexualOrientationCheck = SexualOrientation.objects.filter(choice = data['choice']).first()
+    if sexualOrientationCheck is None:
         serializer=AddSexualOrientationSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
-            sexualOrientation=serializer.save()
+            sexualOrientationCheck=serializer.save()
+
+    countryCheck = Country.objects.filter(country_name = data['country_name']).first()
+    if countryCheck is None:
         serializer=AddCountrySerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
-            country=serializer.save()
-        serializer=ADDLoginSerializer(data=request.data)
-        if serializer.is_valid(raise_exception=True):
-            login=serializer.save()
-        # serializer=AddProfileSerializer(data=data)                                                                                                                                 
-        # if serializer.is_valid(raise_exception=True):
-        #     serializer.save()
-        # login=data['login']
-        # zodiac=data['zodiac']
-        # institute=data['institute']
-        # country=data['country']
-        # profession=data['profession']
-        # sexualOrientation=data['sexualOrientation']
-        Profile.objects.create(
-         username=username,
-         first_name=first_name, 
-         last_name=last_name, 
-         city=city, 
-         bio=bio,
-         age=age,
-         date_of_birth=date_of_birth,
-         gender=gender,
-         login=login,
-         sexualOrientation=sexualOrientation,
-         country=country,
-         profession=profession,
-         institute=institute,
-         zodiac=zodiac,
-        )
-    return Response(data)
+            countryCheck=serializer.save()
 
+    login_obj = Login.objects.filter(id = data['loginID']).first()
+
+    zodiac_obj = Zodiac.objects.filter(zodiac = data['zodiac']).first()
+
+
+    Profile.objects.create(
+        username=username,
+        first_name=first_name, 
+        last_name=last_name, 
+        city=city, 
+        bio=bio,
+        age=age,
+        date_of_birth=date_of_birth,
+        gender=gender,
+        login=login_obj,
+        sexualOrientation=sexualOrientationCheck,
+        country=countryCheck,
+        profession=professionCheck,
+        institute=instituteCheck,
+        zodiac=zodiac_obj,
+    )
+    return Response(data)
 
 @api_view(['DELETE'])
 def user_delete_view(request):
@@ -353,27 +313,28 @@ def filterUsers(request):  # we will get the age range from frontend # and sexua
 
     ids = Profile.objects.filter(id__in = matchedInterestUsers)
     
-    print(ids[0].username)
-    #print(Profile.objects.filter().exclude(id__in=matchedInterestUsers).query)
-    '''Get users within dist_range of longitude & Latitude'''
-    dlat = Radians(F('latitude') - current_lat)
-    dlong = Radians(F('longitude') - current_long)
-    a = (Power(Sin(dlat/2), 2) + Cos(Radians(current_lat)) 
-    * Cos(Radians(F('latitude'))) * Power(Sin(dlong/2), 2)
-    )
-    c = 2 * ATan2(Sqrt(a), Sqrt(1-a))
-    d = 6371 * c
+    # print(ids[0].username)
+    # print(ids[1].username)
+    # #print(Profile.objects.filter().exclude(id__in=matchedInterestUsers).query)
+    # '''Get users within dist_range of longitude & Latitude'''
+    # dlat = Radians(F('latitude') - current_lat)
+    # dlong = Radians(F('longitude') - current_long)
+    # a = (Power(Sin(dlat/2), 2) + Cos(Radians(current_lat)) 
+    # * Cos(Radians(F('latitude'))) * Power(Sin(dlong/2), 2)
+    # )
+    # c = 2 * ATan2(Sqrt(a), Sqrt(1-a))
+    # d = 6371 * c
  
-    LocationsNearMe = Profile.objects.annotate(distance=d).order_by('distance').filter(distance__lt=dist_range)
-    '''filter on sexualOrientation+ageLimit+distance'''
-    if qs is 'all':
-        queryset = Profile.objects.filter(age__gte=age_min, age__lte=age_max,id__in=LocationsNearMe).exclude(id=ID)
-        print("all")
-    else:
-        queryset = Profile.objects.filter(age__gte=age_min, age__lte=age_max,sexualOrientation__choice=qs, id__in=LocationsNearMe ).exclude(id=ID)
-        #print(queryset[0].username)
-        print("not all")
-    serializer= filterUsersSerializer(queryset, many=True) # serialize all the objects # take objects & convert to JSON # many= true means we have many objects so DONOT stop after 1 JSON obj
+    # LocationsNearMe = Profile.objects.annotate(distance=d).order_by('distance').filter(distance__lt=dist_range)
+    # '''filter on sexualOrientation+ageLimit+distance'''
+    # if qs is 'all':
+    #     queryset = Profile.objects.filter(age__gte=age_min, age__lte=age_max,id__in=LocationsNearMe).exclude(id=ID)
+    #     print("all")
+    # else:
+    #     queryset = Profile.objects.filter(age__gte=age_min, age__lte=age_max,sexualOrientation__choice=qs, id__in=LocationsNearMe ).exclude(id=ID)
+    #     #print(queryset[0].username)
+    #     print("not all")
+    serializer= ProfileSerializer(ids, many=True) # serialize all the objects # take objects & convert to JSON # many= true means we have many objects so DONOT stop after 1 JSON obj
     return Response(serializer.data) # return JSON response 
 
 #-----------------------------------------------------------------------------
