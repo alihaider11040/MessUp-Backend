@@ -66,8 +66,20 @@ class Login(models.Model):
     def __str__(self):
         return str(self.email)
 
-class bodyType(models.Model):
-    bodyType = models.CharField(max_length=200, blank=True, null = True)
+class BodyType(models.Model):
+    bodyType_CHOICES = (
+        ('Athletic','Athletic'),
+        ('Toned','Toned'),
+        ('Obese','Obese'),
+        ('Skinny','Skinny'),
+        ('Slender','Slender'),
+        ('About Average','About Average'),
+        ('Curvy','Curvy'),
+        ('Heavyset','Heavyset'),
+        ('Stocky','Stocky'),
+        
+    )
+    bodyType = models.CharField(max_length=200, blank=True, null = True, choices= bodyType_CHOICES, unique=True)
     created = models.DateTimeField(auto_now_add= True)
 
     def __str__(self):
@@ -83,8 +95,8 @@ class Profile(models.Model):
     last_name = models.CharField(max_length=200, blank=True, null = True)
     city = models.CharField(max_length=200, blank = True, null = True)
     bio = models.TextField(blank = True, null= True)
-    height = models.IntegerField(blank=True, null=True)#considered it to be added in inches and calculate it in feet at the backend or take input in cms
-    bodyType = models.ForeignKey(bodyType, on_delete=models.CASCADE, blank=True, null = True)
+    height = models.FloatField(blank=True, null=True)#considered it to be added in inches and calculate it in feet at the backend or take input in cms
+    bodyType = models.ForeignKey(BodyType, on_delete=models.CASCADE, blank=True, null = True)
     gender = models.CharField(max_length=200, choices= GENDER_CHOICES, null=True, blank=True)
     created = models.DateTimeField(auto_now_add= True)
     login = models.OneToOneField(Login, on_delete=models.CASCADE, null=True)

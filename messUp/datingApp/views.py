@@ -2,12 +2,11 @@
 from bisect import bisect_right
 import email
 import math
+from turtle import heading
 #import geopy.distance
 from datingApp.serializers import*
 from datingApp.models import*
 from operator import truediv
-
-#from geopy.distance import geodesic as GD
 
 from django.shortcuts import redirect, render
 from django.http import HttpResponse
@@ -21,10 +20,7 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
-
 from datetime import date
-
-
 from rest_framework.status import HTTP_201_CREATED
 from rest_framework.request import Request
 #from __future__ import print_function
@@ -165,6 +161,7 @@ def Unblock(request):
 def UserSignUpView(request):
     data=request.data
     username=data['username']
+    bodyType=data['bodyType']
     usernameCheck = Profile.objects.filter(username = username).exists()
     if usernameCheck:
         context = {'message': 'username already exists'}
@@ -175,6 +172,8 @@ def UserSignUpView(request):
     city=data['city']
     date_of_birth=data['date_of_birth']
     gender=data['gender']
+    height = float(data['height'])
+    heightInFeet = float(height/12)
     today = date.today()
     todayMonth = int(today.month)
     todayYear = int(today.year)
@@ -234,11 +233,13 @@ def UserSignUpView(request):
         if serializer.is_valid(raise_exception=True):
             countryCheck=serializer.save()
 
-    login_obj = Login.objects.filter(id = data['loginID']).first()
+  
 
     zodiac_obj = Zodiac.objects.filter(zodiac = zodiac).first()
+    bodyType_obj = BodyType.objects.filter(bodyType = bodyType).first() 
 
-
+    login_obj = Login.objects.filter(id = data['loginID']).first()
+    print(bodyType_obj)
     Profile.objects.create(
         username=username,
         first_name=first_name, 
@@ -254,6 +255,8 @@ def UserSignUpView(request):
         profession=professionCheck,
         institute=instituteCheck,
         zodiac=zodiac_obj,
+        height = heightInFeet,
+        bodyType = bodyType_obj,
     )
     return Response(data)
 
