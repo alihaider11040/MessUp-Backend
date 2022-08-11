@@ -128,6 +128,11 @@ class ADDLoginSerializer(serializers.Serializer):
     def create(self,validated_data):
         return Login.objects.create(**validated_data)
 
+class LoginbyIDSerializer(serializers.Serializer):
+    token = serializers.CharField(max_length=100)
+    def create(self,validated_data):
+        return Login.objects.create(**validated_data)
+
 class ProfileSerializer(serializers.Serializer):
     profession=ProfessionSerializer(many=True)
     institute=InstituteSerializer(many=True)
@@ -175,3 +180,20 @@ class AddProfileSerializer(serializers.Serializer):
         ]
     def create(self,validated_data):
             return Profile.objects.create(**validated_data)
+
+class UpdateLocationSerializer(serializers.Serializer):
+    class Meta:
+        model=Profile
+        fields=[
+        'longitude',
+        'latitude'
+        ]
+    def create(self,validated_data):
+            return Profile.objects.create(**validated_data)
+
+class GetCurrentLocationSerializer(serializers.Serializer):
+    longitude = serializers.FloatField(default = 0.0)
+    latitude = serializers.FloatField(default = 0.0)
+    def create(self,validated_data):
+        return Profile.objects.create(**validated_data)
+

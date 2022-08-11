@@ -1,3 +1,4 @@
+from asyncio.windows_events import NULL
 from email import message
 from rest_framework import serializers
 from django.template import RequestContext
@@ -5,12 +6,14 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
-from datingApp.serializers import ProfileSerializer, Userbymobileserializer, ZodiacSerializer, CountrySerializer, SexualOrientationSerializer, InstituteSerializer, ProfessionSerializer, LoginSerializer,AddLoginSerializer,AddZodiacSerializer,AddProfessionSerializer,AddInstituteSerializer, AddSexualOrientationSerializer, AddCountrySerializer, AddZodiacSerializer,ADDLoginSerializer,AddProfileSerializer
+from datingApp.serializers import ProfileSerializer, Userbymobileserializer, ZodiacSerializer, CountrySerializer, SexualOrientationSerializer, InstituteSerializer, ProfessionSerializer, LoginSerializer,AddLoginSerializer,AddZodiacSerializer,AddProfessionSerializer,AddInstituteSerializer, AddSexualOrientationSerializer, AddCountrySerializer, AddZodiacSerializer,ADDLoginSerializer,AddProfileSerializer,GetCurrentLocationSerializer,LoginbyIDSerializer,UpdateLocationSerializer
 from datingApp.models import Profile, Profession, Zodiac, Login, Interests, SexualOrientation, Institute, Country
 from rest_framework import generics,mixins,viewsets
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
-
+#from django.contrib.gis.utils import GeoIP
+from .forms import UserLocationForm
+from django.db import models
 @api_view(['POST'])
 def addwithphone(request): #send phone number and OTP i.e token generated for authecation
     data = request.data()
@@ -29,6 +32,7 @@ def addwithphone(request): #send phone number and OTP i.e token generated for au
 @api_view(['POST'])
 def UserSignUpView(request):
     data=request.data
+    token=['token']
     zodiac=data['zodiac']
     username=data['username']
     first_name=data['first_name']
@@ -38,17 +42,14 @@ def UserSignUpView(request):
     age=data['age']
     date_of_birth=data['date_of_birth']
     gender=data['gender']
-    id=1
-    alreadyExists = Profile.objects.filter(id=id).exists()
+    alreadyExists = Profile.objects.filter(username=username).exists()
     if alreadyExists:
         message="already exist"
         return Response(message)
-
     else:
         # Login.objects.create(
-        #     phone_number=phone_number,
-        #     token=token
-        # )
+        #      token=token
+        #  )
         # Profession.objects.create(
         #     profession_name=profession_name
         # )
@@ -96,9 +97,9 @@ def UserSignUpView(request):
         serializer=AddCountrySerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             country=serializer.save()
-        serializer=ADDLoginSerializer(data=request.data)
+        serializer=LoginbyIDSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
-            login=serializer.save()
+             login=serializer.save()
         # serializer=AddProfileSerializer(data=data)                                                                                                                                 
         # if serializer.is_valid(raise_exception=True):
         #     serializer.save()
@@ -126,6 +127,24 @@ def UserSignUpView(request):
         )
     return Response(data)
 
+@api_view(['POST'])
+def location_on_id(request):
+    data=request.data
+    latitude=data['latitude']
+    longitude=data['longitude']
+    serializer=GetCurrentLocationSerializer(data=request.data)
+    if serializer.is_valid(raise_exception=True):
+            profession=serializer.save()
+    insert_data=Profile.objects.create(
+        longitude=longitude,
+        latitude=latitude,
+        )
+    if insert_data:
+            return Response(json_data)
+    else:
+            json_data = {'msg': "Data not saved", 'state_val': 2}
+            return Response(json_data)
+    return Response(data)
 
 @api_view(['DELETE'])
 def user_delete_view(request):
@@ -143,7 +162,7 @@ def user_update_view(request):
     alreadyExists = Profile.objects.filter(login=login).exists()
     if alreadyExists:
         user = Profile.objects.get(login=login)
-        user.first_name= data['FirstName']
+        user.first_name = data['FirstName']
         user.last_name = data['LastName']
         user.city = data['city']
         user.bio = data['bio']
@@ -160,6 +179,59 @@ def user_update_view(request):
         content = {'detail': 'user not exist'}
         return Response(content)
     return Response(Profile.data)
+
+
+@api_view(['PUT','POST'])
+def UpdateUserLocation(request):
+    data = request.data
+    id=data['id']
+    alreadyExists = get_object_or_404(Login, profile__login=id)
+    if alreadyExists is not NULL:
+        get_object_or_404(Profile,login=id)
+        user=Profile.objects.get(login=id)
+        user.longitude= data['longitude']
+        user.latitude= data['latitude']
+        user.save()
+        profile = GetCurrentLocationSerializer(user, many=False)
+    return Response(profile.data)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

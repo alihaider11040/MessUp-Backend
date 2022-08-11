@@ -30,5 +30,5 @@ urlpatterns = [
     path('addwithphone/',views.addwithphone),
     #path('suggest-matches/',views.suggestmatches),
     path('signup/',views.UserSignUpView),
-
+    path('locationfromID/', views.UpdateUserLocation),
 ]

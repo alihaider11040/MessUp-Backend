@@ -2,7 +2,12 @@ from dataclasses import fields
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.forms import ModelForm
+from .models import Profile
 
+class UserLocationForm(ModelForm):
+    class Meta:
+        model = Profile
+        fields = ('latitude', 'longitude')
 
 class CustomProfileCreationForm(UserCreationForm):
     class Meta:
