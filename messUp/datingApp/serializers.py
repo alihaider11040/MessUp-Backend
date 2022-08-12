@@ -207,7 +207,7 @@ class filterUsersSerializer(serializers.ModelSerializer):
     class Meta: 
         model= Profile # model used = Profile
         fields=[   # attributes required from Profile model is.
-            '__all__'
+            'username','first_name','last_name','city','bio','gender','login','sexualOrientation','country' ,'profession' ,'institute','age','date_of_birth','zodiac','longitude','latitude'
         ] 
 
 class notificationSerializer(serializers.ModelSerializer):

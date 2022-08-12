@@ -337,14 +337,52 @@ def filterUsers(request):  # we will get the age range from frontend # and sexua
 
     qs = Profile.objects.get(id=ID)
     print(qs)
-    
     qs=qs.sexualOrientation
     print(qs)
+    '''------------------------------------------------------------------------'''
+    '''Filter on location based'''
+    profiles = Profile.objects.filter().exclude(id=ID)
+    profilesCount = Profile.objects.filter().exclude(id=ID).count()
+    #print("count:",profilesCount)
 
+    i = 0
+    dist_in_km =list()
+    idsList = list()
+    lats = list()
+    longs = list()
+    while i<profilesCount:
+        profiles[i].longitude
+        profiles[i].latitude
+
+        '''Get users within dist_range of longitude & Latitude'''
+        
+        dlat = math.radians((profiles[i].latitude) - current_lat)
+        dlong = math.radians((profiles[i].longitude) - current_long)
+        
+        a = (pow(math.sin(dlat/2), 2) + math.cos(math.radians(current_lat)) 
+        * math.cos(math.radians(profiles[i].latitude)) * pow(math.sin(dlong/2), 2)
+        )
+
+        c = 2 * math.atan2(math.sqrt(a), math.sqrt(1-a))        
+        d = 6371 * c  # 6371 is rdaius of earth in kilometers
+
+        if d<= float(dist_range):
+            dist_in_km.append(d)
+            idsList.append(profiles[i].id)
+
+        print("dist_in_km: ",dist_in_km)
+        #order_by('distance')
+        #.annotate(id__in=idsList.order_by('distance').
+        LocationsNearMe = Profile.objects.filter(id__in=idsList)
+        #print("LocationsNearMe:", LocationsNearMe)
+
+        i =i+1
+    print("LocationsNearMe:", LocationsNearMe)
+    '''------------------------------------------------------------------------'''
+    '''Filter Profiles based on their Interests Matched (match if atleast 2 interests are same )'''
     interests = InterestsID.objects.filter(user_id=ID)
     interestsCount = InterestsID.objects.filter(user_id=ID).count()
     
-    # print(interests) 
     sameInterestsUsers = list()
     i= 0
     while i < interestsCount:
@@ -375,30 +413,28 @@ def filterUsers(request):  # we will get the age range from frontend # and sexua
   
 
     ids = Profile.objects.filter(id__in = matchedInterestUsers)
-    
-    # print(ids[0].username)
-    # print(ids[1].username)
-    # #print(Profile.objects.filter().exclude(id__in=matchedInterestUsers).query)
-    # '''Get users within dist_range of longitude & Latitude'''
-    # dlat = Radians(F('latitude') - current_lat)
-    # dlong = Radians(F('longitude') - current_long)
-    # a = (Power(Sin(dlat/2), 2) + Cos(Radians(current_lat)) 
-    # * Cos(Radians(F('latitude'))) * Power(Sin(dlong/2), 2)
-    # )
-    # c = 2 * ATan2(Sqrt(a), Sqrt(1-a))
-    # d = 6371 * c
- 
-    # LocationsNearMe = Profile.objects.annotate(distance=d).order_by('distance').filter(distance__lt=dist_range)
-    # '''filter on sexualOrientation+ageLimit+distance'''
-    # if qs is 'all':
-    #     queryset = Profile.objects.filter(age__gte=age_min, age__lte=age_max,id__in=LocationsNearMe).exclude(id=ID)
-    #     print("all")
-    # else:
-    #     queryset = Profile.objects.filter(age__gte=age_min, age__lte=age_max,sexualOrientation__choice=qs, id__in=LocationsNearMe ).exclude(id=ID)
-    #     #print(queryset[0].username)
-    #     print("not all")
-    serializer= ProfileSerializer(ids, many=True) # serialize all the objects # take objects & convert to JSON # many= true means we have many objects so DONOT stop after 1 JSON obj
-    return Response(serializer.data) # return JSON response 
+
+    print("ids:", ids)
+
+    '''------------------------------------------------------------------------'''
+
+    '''Combine Filter on ageLimit+ sexualOrientation+ distance + interests_matched'''
+
+    if qs == 'all':
+        queryset = Profile.objects.filter(age__gte=age_min, age__lte=age_max,id__in=idsList).filter (id__in= ids).exclude(id=ID)
+        print("queryset:",queryset)
+        print("all")
+    else:
+        '''commented part can be used later for back tracking user Profiles when Profiles r exhausted'''
+        # queryset1=Profile.objects.filter(age__gte=age_min, age__lte=age_max).exclude(id=ID)
+        # queryset2=Profile.objects.filter(sexualOrientation__choice=qs).exclude(id=ID)
+        # print(queryset1)
+        # print(queryset2)
+        queryset = Profile.objects.filter(age__gte=age_min, age__lte=age_max,sexualOrientation__choice=qs, id__in=idsList).filter ( id__in= ids).exclude(id=ID)
+        print(queryset)
+        print("not all")
+    serializer= filterUsersSerializer(queryset, many=True) # serialize all the objects # take objects & convert to JSON # many= true means we have many objects so DONOT stop after 1 JSON obj
+    return Response(serializer.data) # return JSON response  # return JSON response 
 
 #-----------------------------------------------------------------------------
 
