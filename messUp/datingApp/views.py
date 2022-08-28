@@ -97,6 +97,16 @@ def getUser(request, pk):
         return Response(content)
 
 
+    
+@api_view(['GET'])
+def getRoutes(request):
+
+    routes = [
+        
+        {'POST': '/api/users/token'},
+        {'POST': '/api/users/token/refresh'},
+    ]
+    return Response(routes)
 #-----not on server-------------------------#
 
 @api_view(['POST', 'PUT'])
