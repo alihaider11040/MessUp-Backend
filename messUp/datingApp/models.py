@@ -39,7 +39,7 @@ class Institute(models.Model):
 class Zodiac(models.Model):
     ZODIAC_CHOICES=(
         ('Capricon','Capricon'),
-        ('Aquarius','Aquarius'),
+        ('Aquarius','Aquarius'), 
         ('Pisces','Pisces'),
         ('Aries','Aries'),
         ('Taurus','Taurus'),
@@ -51,7 +51,7 @@ class Zodiac(models.Model):
         ('Scorpio','Scorpio'),
         ('Sagittarius','Sagittarius'),
     )
-    zodiac =  models.CharField(max_length=100, choices=ZODIAC_CHOICES)
+    zodiac =  models.CharField(max_length=100, choices=ZODIAC_CHOICES, unique=True)
   
     created = models.DateTimeField(auto_now_add= True)
     def __str__(self):
@@ -66,26 +66,40 @@ class Login(models.Model):
     def __str__(self):
         return str(self.email)
 
-class bodyType(models.Model):
-    bodyType = models.CharField(max_length=200, blank=True, null = True)
+class BodyType(models.Model):
+    bodyType_CHOICES = (
+        ('Athletic','Athletic'),
+        ('Toned','Toned'),
+        ('Obese','Obese'),
+        ('Skinny','Skinny'),
+        ('Slender','Slender'),
+        ('About Average','About Average'),
+        ('Curvy','Curvy'),
+        ('Heavyset','Heavyset'),
+        ('Stocky','Stocky'),
+        
+    )
+    bodyType = models.CharField(max_length=200, blank=True, null = True, choices= bodyType_CHOICES, unique=True)
     created = models.DateTimeField(auto_now_add= True)
 
+    def __str__(self):
+        return str(self.bodyType)
 class Profile(models.Model):
     GENDER_CHOICES = (
         ('Male','Male'),
         ('Female','Female'),
         ('Other','Other'),
     )
-    username= models.CharField(max_length=200, blank=True, null = True)
+    username= models.CharField(max_length=200, blank=True, null = True, unique = True)
     first_name = models.CharField(max_length=200, blank=True, null = True)
     last_name = models.CharField(max_length=200, blank=True, null = True)
     city = models.CharField(max_length=200, blank = True, null = True)
     bio = models.TextField(blank = True, null= True)
-    height = models.IntegerField(blank=True, null=True)#considered it to be added in inches and calculate it in feet at the backend or take input in cms
-    bodyType = models.ForeignKey(bodyType, on_delete=models.CASCADE, blank=True, null = True)
+    height = models.FloatField(blank=True, null=True)#considered it to be added in inches and calculate it in feet at the backend or take input in cms
+    bodyType = models.ForeignKey(BodyType, on_delete=models.CASCADE, blank=True, null = True)
     gender = models.CharField(max_length=200, choices= GENDER_CHOICES, null=True, blank=True)
     created = models.DateTimeField(auto_now_add= True)
-    login = models.ForeignKey(Login, on_delete=models.CASCADE, null=True)
+    login = models.OneToOneField(Login, on_delete=models.CASCADE, null=True)
     sexualOrientation = models.ForeignKey(SexualOrientation,on_delete=models.CASCADE)
     country = models.ForeignKey(Country, on_delete=models.CASCADE)
     profession = models.ForeignKey(Profession,on_delete=models.CASCADE)
@@ -101,7 +115,7 @@ class Profile(models.Model):
 
 class PictureGallery(models.Model):
     created = models.DateTimeField(auto_now_add= True)
-    user = models.ForeignKey(Profile, on_delete=models.CASCADE, null = True)
+    user = models.OneToOneField(Profile, on_delete=models.CASCADE, null = True)
     profile_image = models.ImageField(null=True, blank = True, upload_to='profiles/', default = "user-default.png")
     image1 = models.ImageField(null=True,blank=True, upload_to='profiles/', default = "user-default.png")
     image2 = models.ImageField(null=True,blank=True, upload_to='profiles/', default = "user-default.png")
@@ -139,7 +153,7 @@ class BlockProfile(models.Model):
         return str(self.user1.username + " "+ self.user2.username)
 
 class Notifications(models.Model):
-    user = models.ForeignKey(Profile,  blank= True, null=True,on_delete=models.CASCADE),
+    user = models.ForeignKey(Profile,blank= True, null=True,on_delete=models.CASCADE)
     notification_message = models.CharField(max_length=500, null=True, blank=True)
     created = models.DateTimeField(auto_now_add= True)
 
