@@ -299,43 +299,108 @@ def user_update_view(request):
 
 #---------------------------------------------------------------------------------------------------------
 
-@api_view(['GET'])  #GET method to return all users with respect to age and sexual orientation
-def filterUsers(request):  # we will get the age range from frontend # and sexual orientation from backend
-    obj_data = request.data
-    '''get all these from frontend'''
-    age_min = obj_data['age_min']
-    age_max = obj_data['age_max']
-    ID = obj_data['ID']
-    current_lat = float(obj_data['current_lat'])
-    current_long = float(obj_data['current_long'])
-    dist_range= obj_data['dist_range']
+@api_view(['POST'])
+def UserSignUpView(request):
+    data=request.data
+    username=data['username']
+    bodyType=data['bodyType']
+    usernameCheck = Profile.objects.filter(username = username).exists()
+    if usernameCheck:
+        context = {'message': 'username already exists'}
+        return Response(context)
+    first_name=data['first_name']
+    last_name=data['last_name']
+    bio=data['bio']
+    city=data['city']
+    date_of_birth=data['date_of_birth']
+    gender=data['gender']
+    height = float(data['height'])
+    heightInFeet = float(height/12)
+    today = date.today()
+    todayMonth = int(today.month)
+    todayYear = int(today.year)
+    birthYear = int(date_of_birth[:4])
+    todayDay = int(today.day)
+    birthMonth = int(date_of_birth[5:7])
+    birthDay = int(date_of_birth[8:10])   
+    age=todayYear - birthYear - ((todayMonth, todayDay) < (birthMonth, birthDay))
     
-    '''check if alredy exists in DB-- if not tdisplay error404'''
-    obj=get_object_or_404(Profile,id=ID)
+    if birthMonth == 12:
+        zodiac = 'Sagittarius' if (birthDay < 22) else 'capricorn'
+    elif birthMonth == 1:
+        zodiac = 'Capricorn' if (birthDay < 20) else 'Aquarius'
+    elif birthMonth == 2:
+        zodiac = 'Aquarius' if (birthDay < 19) else 'Pisces'
+    elif birthMonth == 3:
+        zodiac = 'Pisces' if (birthDay < 21) else 'Aries'
+    elif birthMonth == 4:
+        zodiac = 'Aries' if (birthDay < 20) else 'Taurus'
+    elif birthMonth == 5:
+        zodiac = 'Taurus' if (birthDay < 21) else 'Gemini'
+    elif birthMonth == 6:
+        zodiac = 'Gemini' if (birthDay < 21) else 'Cancer'
+    elif birthMonth == 7:
+        zodiac = 'Cancer' if (birthDay < 23) else 'Leo'
+    elif birthMonth == 8:
+        zodiac = 'Leo' if (birthDay < 23) else 'Virgo'
+    elif birthMonth == 9:
+        zodiac = 'Virgo' if (birthDay < 23) else 'Libra'
+    elif birthMonth == 10:
+        zodiac = 'Libra' if (birthDay < 23) else 'Scorpio'
+    elif birthMonth == 11:
+        zodiac = 'Scorpio' if (birthDay < 22) else 'Sagittarius'
 
-    qs = Profile.objects.get(id=ID)
-    print(qs)
-    qs=qs.sexualOrientation
-    print(qs)
+    professionCheck = Profession.objects.filter(profession_name = data['profession_name']).first()
+    if professionCheck is None:
+        serializer=AddProfessionSerializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            professionCheck=serializer.save()
 
-    '''Get users within dist_range of longitude & Latitude'''
-    dlat = Radians(F('latitude') - current_lat)
-    dlong = Radians(F('longitude') - current_long)
-    a = (Power(Sin(dlat/2), 2) + Cos(Radians(current_lat)) 
-    * Cos(Radians(F('latitude'))) * Power(Sin(dlong/2), 2)
+
+    instituteCheck = Institute.objects.filter(institution_name = data['institution_name']).first()
+    if instituteCheck is None:
+        serializer=AddInstituteSerializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+           instituteCheck=serializer.save()
+
+    sexualOrientationCheck = SexualOrientation.objects.filter(choice = data['choice']).first()
+    if sexualOrientationCheck is None:
+        serializer=AddSexualOrientationSerializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            sexualOrientationCheck=serializer.save()
+
+    countryCheck = Country.objects.filter(country_name = data['country_name']).first()
+    if countryCheck is None:
+        serializer=AddCountrySerializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            countryCheck=serializer.save()
+
+  
+
+    zodiac_obj = Zodiac.objects.filter(zodiac = zodiac).first()
+    bodyType_obj = BodyType.objects.filter(bodyType = bodyType).first() 
+
+    login_obj = Login.objects.filter(id = data['loginID']).first()
+    print(bodyType_obj)
+    Profile.objects.create(
+        username=username,
+        first_name=first_name, 
+        last_name=last_name, 
+        city=city, 
+        bio=bio,
+        age=age,
+        date_of_birth=date_of_birth,
+        gender=gender,
+        login=login_obj,
+        sexualOrientation=sexualOrientationCheck,
+        country=countryCheck,
+        profession=professionCheck,
+        institute=instituteCheck,
+        zodiac=zodiac_obj,
+        height = heightInFeet,
+        bodyType = bodyType_obj,
     )
-    c = 2 * ATan2(Sqrt(a), Sqrt(1-a))
-    d = 6371 * c
-    LocationsNearMe = Profile.objects.annotate(distance=d).order_by('distance').filter(distance__lt=dist_range)
-    '''filter on sexualOrientation+ageLimit+distance'''
-    if qs is 'all':
-        queryset = Profile.objects.filter(age__gte=age_min, age__lte=age_max,id__in=LocationsNearMe).exclude(id=ID)
-        print("all")
-    else:
-        queryset = Profile.objects.filter(age__gte=age_min, age__lte=age_max,sexualOrientation__choice=qs, id__in=LocationsNearMe ).exclude(id=ID)
-        print("not all")
-    serializer= filterUsersSerializer(queryset, many=True) # serialize all the objects # take objects & convert to JSON # many= true means we have many objects so DONOT stop after 1 JSON obj
-    return Response(serializer.data) # return JSON response 
+    return Response(data)
 
 #-----------------------------------------------------------------------------
 
@@ -384,6 +449,42 @@ def SwipeRight(request):
         match.save()
         oneSidedLike = RegisterMatch(match, many=False)
         return Response(oneSidedLike.data, status=HTTP_201_CREATED)
+
+
+    
+ @api_view(['DELETE'])
+def user_delete_view(request):
+    data=request.data
+    login=data['login']
+    obj=get_object_or_404(Profile,Login)
+    #UserImage.objects.filter(login=login,image=image).delete()
+    content = {'detail': 'Successfully deleted'}
+    return Response(content)
+
+@api_view(['PUT'])
+def user_update_view(request):
+    data = request.data
+    login=data['login']
+    alreadyExists = Profile.objects.filter(login=login).exists()
+    if alreadyExists:
+        user = Profile.objects.get(login=login)
+        user.first_name= data['FirstName']
+        user.last_name = data['LastName']
+        user.city = data['city']
+        user.bio = data['bio']
+        user.sexualOrientation = data['sexualOrientation']
+        user.id = data['id']    
+        user.country = data['country']
+        user.profession = data['profession']
+        user.institute = data['institute']
+        user.date_of_birth = data['date_of_birth']
+        user.zodiac=data['zodiac']
+        user.save()
+        Profile = ProfileSerializer(user, many=False)
+    else:
+        content = {'detail': 'user not exist'}
+        return Response(content)
+    return Response(Profile.data)
 
 
 
