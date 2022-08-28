@@ -202,3 +202,23 @@ class BlockProfileSerializer(serializers.ModelSerializer):
         fields=[
             'user1', 'user2','block_check'
         ]
+        
+class filterUsersSerializer(serializers.ModelSerializer):
+    class Meta: 
+        model= Profile # model used = Profile
+        fields=[   # attributes required from Profile model is.
+            'username','first_name','last_name','city','bio','gender','login','sexualOrientation','country' ,'profession' ,'institute','age','date_of_birth','zodiac','longitude','latitude'
+        ] 
+
+class notificationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Notifications
+        fields = [
+            'notification_message', 'id'
+        ]
+class addNotificationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Notifications
+        fields = [
+            'notification_message', 'user'
+        ]
