@@ -7,6 +7,11 @@ from .models import Country, Zodiac, MatchMake, BlockProfile
 
 #testmyfetch
 
+class ProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Profile
+        fields = '__all__'
+
 class Userbymobileserializer(serializers.ModelSerializer):
     class Meta:
         model = Login
